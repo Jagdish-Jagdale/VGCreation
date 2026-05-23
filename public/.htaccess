@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Redirect index.html to root
+  RewriteRule ^index\.html$ / [L,R=301]
+
+  # Skip files and directories that exist
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+
+  # Rewrite all other requests to index.html (SPA fallback)
+  RewriteRule . /index.html [L]
+</IfModule>
