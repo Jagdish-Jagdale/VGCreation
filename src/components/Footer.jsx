@@ -11,7 +11,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           {/* Main Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-12">
-            
+
             {/* Column 1: Brand Info */}
             <div className="lg:col-span-1 flex flex-col gap-4">
               <div className="flex items-center gap-3">
@@ -45,9 +45,9 @@ export default function Footer() {
               </div>
               <div className="text-xs text-gray-400 leading-tight">
                 <span className="block font-medium">Scan to visit on Google Maps</span>
-                <a 
-                  href={mapsSearchUrl} 
-                  target="_blank" 
+                <a
+                  href={mapsSearchUrl}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-sky-400 hover:text-sky-300 hover:underline font-bold mt-1 inline-flex items-center gap-1 transition-colors"
                 >
@@ -90,7 +90,7 @@ export default function Footer() {
               </h4>
               <ul className="flex flex-col gap-2.5 text-sm">
                 <li>
-                  <a href="#services" className="hover:text-sky-400 transition-colors duration-200">Glass Partitions</a>
+                  <a href="services" className="hover:text-sky-400 transition-colors duration-200">Glass Partitions</a>
                 </li>
                 <li>
                   <a href="#services" className="hover:text-sky-400 transition-colors duration-200">Aluminium & UPVC Windows</a>
@@ -157,12 +157,12 @@ export default function Footer() {
                 className="mt-2 flex items-center justify-center gap-2 bg-transparent hover:bg-[#25D366]/10 border border-[#25D366]/40 text-[#25D366] font-semibold text-sm py-2 px-4 rounded-lg transition-all group"
               >
                 <svg className="w-5 h-5 fill-[#25D366] transition-transform group-hover:scale-110" viewBox="0 0 24 24">
-                  <path d="M12.012 2c-5.506 0-9.988 4.482-9.988 9.988 0 1.761.459 3.479 1.332 5.002L2 22l5.163-1.353a9.92 9.92 0 004.846 1.258c5.506 0 9.988-4.482 9.988-9.988C22 6.482 17.518 2 12.012 2zm6.059 14.18c-.248.694-1.233 1.258-1.743 1.344-.459.081-1.054.149-3.048-.682-2.548-1.062-4.171-3.664-4.295-3.832-.124-.167-1.023-1.365-1.023-2.607 0-1.242.645-1.85 0.875-2.098.23-.248.502-.309.67-.309.167 0 .334.006.477.012.149.006.347-.056.546.422.205.49.694 1.693.756 1.817.062.124.105.273.019.44-.087.174-.13.279-.26.434-.13.155-.273.347-.39.465-.13.13-.266.273-.112.533.155.26.694 1.135 1.488 1.836.986.874 1.817 1.147 2.078 1.277.26.13.409.112.564-.062.155-.174.67-.775.85-.1041.174-.267.353-.223.589-.136.236.087 1.488.701 1.91.62.422.26.701.39.831.52.13.13.26.39.136.694z"/>
+                  <path d="M12.012 2c-5.506 0-9.988 4.482-9.988 9.988 0 1.761.459 3.479 1.332 5.002L2 22l5.163-1.353a9.92 9.92 0 004.846 1.258c5.506 0 9.988-4.482 9.988-9.988C22 6.482 17.518 2 12.012 2zm6.059 14.18c-.248.694-1.233 1.258-1.743 1.344-.459.081-1.054.149-3.048-.682-2.548-1.062-4.171-3.664-4.295-3.832-.124-.167-1.023-1.365-1.023-2.607 0-1.242.645-1.85 0.875-2.098.23-.248.502-.309.67-.309.167 0 .334.006.477.012.149.006.347-.056.546.422.205.49.694 1.693.756 1.817.062.124.105.273.019.44-.087.174-.13.279-.26.434-.13.155-.273.347-.39.465-.13.13-.266.273-.112.533.155.26.694 1.135 1.488 1.836.986.874 1.817 1.147 2.078 1.277.26.13.409.112.564-.062.155-.174.67-.775.85-.1041.174-.267.353-.223.589-.136.236.087 1.488.701 1.91.62.422.26.701.39.831.52.13.13.26.39.136.694z" />
                 </svg>
                 Chat on WhatsApp
               </a>
             </div>
-            
+
           </div>
 
           <hr className="border-white/10 my-8" />
