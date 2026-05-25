@@ -90,7 +90,7 @@ export default function Footer() {
               </h4>
               <ul className="flex flex-col gap-2.5 text-sm">
                 <li>
-                  <a href="services" className="hover:text-sky-400 transition-colors duration-200">Glass Partitions</a>
+                  <a href="#services" className="hover:text-sky-400 transition-colors duration-200">Glass Partitions</a>
                 </li>
                 <li>
                   <a href="#services" className="hover:text-sky-400 transition-colors duration-200">Aluminium & UPVC Windows</a>
