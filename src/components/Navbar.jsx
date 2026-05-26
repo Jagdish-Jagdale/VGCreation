@@ -1,23 +1,46 @@
 import { useState, useEffect, useRef } from "react";
 import logo from "../assets/vision_glass_creation_logo.png";
 
-export default function Navbar() {
+export default function Navbar({ currentPath }) {
   const [open, setOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
+  const [activeSection, setActiveSection] = useState(() => {
+    const path = currentPath || window.location.pathname;
+    if (path === "/about") return "about";
+    if (path === "/services") return "services";
+    if (path === "/gallery") return "gallery";
+    if (path === "/contact") return "contact";
+    return "home";
+  });
   const clickLock = useRef(false); // prevents observer overriding a click
 
   const links = ["Home", "About", "Services", "Gallery"];
 
+  // Sync active section state when currentPath prop changes
+  useEffect(() => {
+    const path = currentPath || window.location.pathname;
+    if (path === "/about") setActiveSection("about");
+    else if (path === "/services") setActiveSection("services");
+    else if (path === "/gallery") setActiveSection("gallery");
+    else if (path === "/contact") setActiveSection("contact");
+    else if (path === "/") setActiveSection("home");
+  }, [currentPath]);
+
   // Track active section — fires when a section crosses the viewport midpoint
   useEffect(() => {
-    const sections = document.querySelectorAll("section[id]");
+    const sections = document.querySelectorAll("section[id], footer[id]");
 
     const observer = new IntersectionObserver(
       (entries) => {
         if (clickLock.current) return; // ignore observer while user just clicked
+        if (window.location.pathname !== "/") return; // only track scroll sections on home page
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
+            const id = entry.target.id;
+            setActiveSection(id);
+            const pathname = id === "home" ? "/" : `/${id}`;
+            if (window.location.pathname !== pathname) {
+              window.history.replaceState(null, "", pathname);
+            }
           }
         });
       },
@@ -67,7 +90,7 @@ export default function Navbar() {
       {/* Full-width container — logo flush to left, links flush to right */}
       <div className="w-full px-12 py-3 flex items-center justify-between">
         {/* Logo */}
-        <a href="#home" className="flex-shrink-0" onClick={() => handleNavClick("home")}>
+        <a href="/" className="flex-shrink-0" onClick={() => handleNavClick("home")}>
           <img
             src={logo}
             alt="Vision Glass Creation"
@@ -81,7 +104,7 @@ export default function Navbar() {
             {links.map((link) => (
               <li key={link}>
                 <a
-                  href={`#${link.toLowerCase()}`}
+                  href={link.toLowerCase() === "home" ? "/" : `/${link.toLowerCase()}`}
                   className={linkClass(link)}
                   onClick={() => handleNavClick(link)}
                 >
@@ -108,13 +131,18 @@ export default function Navbar() {
 
           {/* Contact Us button */}
           <a
-            href="#contact"
-            className="bg-[#1481b8] text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-[#116a9a] transition-colors"
+            href="/contact"
+            className={`text-sm font-semibold px-5 py-2 rounded-full transition-all duration-200 ${
+              activeSection === "contact"
+                ? "bg-[#116a9a] text-white ring-2 ring-offset-2 ring-[#1481b8]/50 shadow-sm"
+                : "bg-[#1481b8] text-white hover:bg-[#116a9a]"
+            }`}
+            onClick={() => handleNavClick("contact")}
           >
             Contact Us
           </a>
         </div>
-
+ 
         {/* Mobile menu button */}
         <button
           className="md:hidden text-[#1481b8] focus:outline-none"
@@ -132,14 +160,14 @@ export default function Navbar() {
           )}
         </button>
       </div>
-
+ 
       {/* Mobile dropdown */}
       {open && (
         <ul className="md:hidden bg-white border-t px-6 pb-4 flex flex-col gap-2">
           {links.map((link) => (
             <li key={link}>
               <a
-                href={`#${link.toLowerCase()}`}
+                href={link.toLowerCase() === "home" ? "/" : `/${link.toLowerCase()}`}
                 className={mobileLinkClass(link)}
                 onClick={() => handleNavClick(link)}
               >
@@ -147,7 +175,7 @@ export default function Navbar() {
               </a>
             </li>
           ))}
-
+ 
           {/* Phone */}
           <li>
             <a
@@ -162,13 +190,20 @@ export default function Navbar() {
               +91 99219 17083
             </a>
           </li>
-
+ 
           {/* Contact Us */}
           <li className="pt-1">
             <a
-              href="#contact"
-              className="block text-center bg-[#1481b8] text-white font-semibold px-5 py-2 rounded-full hover:bg-[#116a9a] transition-colors"
-              onClick={() => setOpen(false)}
+              href="/contact"
+              className={`block text-center font-semibold px-5 py-2 rounded-full transition-all duration-200 ${
+                activeSection === "contact"
+                  ? "bg-[#116a9a] text-white ring-2 ring-[#1481b8]/30 shadow-sm"
+                  : "bg-[#1481b8] text-white hover:bg-[#116a9a]"
+              }`}
+              onClick={() => {
+                setOpen(false);
+                handleNavClick("contact");
+              }}
             >
               Contact Us
             </a>

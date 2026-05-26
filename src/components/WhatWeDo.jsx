@@ -73,7 +73,7 @@ const services = [
 
 export default function WhatWeDo() {
   return (
-    <section className="py-20 bg-gray-50">
+    <section id="services" className="py-20 bg-gray-50">
       <div className="max-w-6xl mx-auto px-6">
 
         {/* Section label */}
@@ -121,7 +121,7 @@ export default function WhatWeDo() {
                   {service.description}
                 </p>
                 <a
-                  href="#services"
+                  href="/services"
                   className="inline-flex items-center gap-1 text-[#1481b8] text-sm font-semibold hover:gap-2 transition-all"
                 >
                   Learn More
@@ -130,6 +130,25 @@ export default function WhatWeDo() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* View All Services Button */}
+        <div className="flex justify-center mt-12">
+          <a
+            href="/services"
+            className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-white border border-slate-200 text-slate-700 hover:text-[#1481b8] hover:border-[#1481b8]/50 rounded-full text-sm font-semibold transition-all duration-200 hover:shadow-sm group"
+          >
+            View All Services
+            <svg 
+              className="w-4 h-4 transform transition-transform group-hover:translate-x-0.5" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2.5" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </a>
         </div>
       </div>
     </section>

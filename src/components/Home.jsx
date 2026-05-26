@@ -27,13 +27,13 @@ export default function Home() {
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
-            href="#contact"
+            href="/contact"
             className="inline-block bg-white text-[#1481b8] font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition-colors"
           >
             Get a Free Quote
           </a>
           <a
-            href="#gallery"
+            href="/services"
             className="inline-flex items-center gap-2 bg-transparent border-2 border-white text-white font-semibold px-8 py-3 rounded-full hover:bg-white/10 transition-colors"
           >
             View Our Work

@@ -8,12 +8,12 @@ export default function Footer() {
   return (
     <>
       <footer id="contact" className="relative bg-[#051120] text-gray-400 border-t-4 border-[#1481b8] pt-16 pb-8">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-8">
           {/* Main Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-12">
 
             {/* Column 1: Brand Info */}
-            <div className="lg:col-span-1 flex flex-col gap-4">
+            <div className="lg:col-span-3 flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 <img
                   src={logo}
@@ -30,7 +30,7 @@ export default function Footer() {
             </div>
 
             {/* Column 2: Scan to Visit */}
-            <div className="flex flex-col gap-4 items-start">
+            <div className="lg:col-span-2 flex flex-col gap-4 items-start">
               <h4 className="text-sm font-extrabold text-white tracking-widest uppercase">
                 Scan to Visit
               </h4>
@@ -60,31 +60,31 @@ export default function Footer() {
             </div>
 
             {/* Column 3: Navigate */}
-            <div className="flex flex-col gap-4">
+            <div className="lg:col-span-2 flex flex-col gap-4">
               <h4 className="text-sm font-extrabold text-white tracking-widest uppercase">
                 Navigate
               </h4>
               <ul className="flex flex-col gap-2.5 text-sm">
                 <li>
-                  <a href="#home" className="hover:text-sky-400 transition-colors duration-200">Home</a>
+                  <a href="/" className="hover:text-sky-400 transition-colors duration-200">Home</a>
                 </li>
                 <li>
-                  <a href="#about" className="hover:text-sky-400 transition-colors duration-200">About</a>
+                  <a href="/about" className="hover:text-sky-400 transition-colors duration-200">About</a>
                 </li>
                 <li>
-                  <a href="#services" className="hover:text-sky-400 transition-colors duration-200">Services</a>
+                  <a href="/services" className="hover:text-sky-400 transition-colors duration-200">Services</a>
                 </li>
                 <li>
-                  <a href="#gallery" className="hover:text-sky-400 transition-colors duration-200">Gallery</a>
+                  <a href="/gallery" className="hover:text-sky-400 transition-colors duration-200">Gallery</a>
                 </li>
                 <li>
-                  <a href="#contact" className="hover:text-sky-400 transition-colors duration-200">Contact</a>
+                  <a href="/contact" className="hover:text-sky-400 transition-colors duration-200">Contact</a>
                 </li>
               </ul>
             </div>
 
             {/* Column 4: Our Services */}
-            <div className="flex flex-col gap-4">
+            <div className="lg:col-span-2 flex flex-col gap-4">
               <h4 className="text-sm font-extrabold text-white tracking-widest uppercase">
                 Our Services
               </h4>
@@ -117,7 +117,7 @@ export default function Footer() {
             </div>
 
             {/* Column 5: Contact */}
-            <div className="flex flex-col gap-4">
+            <div className="lg:col-span-3 flex flex-col gap-4">
               <h4 className="text-sm font-extrabold text-white tracking-widest uppercase">
                 Contact
               </h4>
