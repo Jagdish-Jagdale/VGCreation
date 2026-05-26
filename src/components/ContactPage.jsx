@@ -195,7 +195,7 @@ export default function ContactPage() {
                     <option value="Glass Partitions">Glass Partitions</option>
                     <option value="Windows">Aluminium & UPVC Windows</option>
                     <option value="Facade">Structural Facade</option>
-                    <option value="Glazing">Glass Glazing</option>
+                    <option value="Glazing">Glass Glazingzz</option>
                     <option value="Mirrors">LED & Vastu Mirrors</option>
                     <option value="Other">Other Inquiry</option>
                   </select>
