@@ -95,14 +95,16 @@ const categories = ["ALL", "COMMERCIAL", "INDUSTRIAL", "RESIDENTIAL"];
 export default function Gallery() {
   const [activeFilter, setActiveFilter] = useState("ALL");
   const [visibleCount, setVisibleCount] = useState(6);
+  const [selectedIdx, setSelectedIdx] = useState(null);
 
   useEffect(() => {
     document.title = "Gallery | Vision Glass Creation";
   }, []);
 
-  // Reset page size when filter changes to avoid weird layouts
+  // Reset page size and close modal when filter changes to avoid bugs
   useEffect(() => {
     setVisibleCount(6);
+    setSelectedIdx(null);
   }, [activeFilter]);
 
   const filteredItems = items.filter(
@@ -118,6 +120,28 @@ export default function Gallery() {
   const loadMore = () => {
     setVisibleCount(12);
   };
+
+  const handleNext = () => {
+    setSelectedIdx((prev) => (prev === filteredItems.length - 1 ? 0 : prev + 1));
+  };
+
+  const handlePrev = () => {
+    setSelectedIdx((prev) => (prev === 0 ? filteredItems.length - 1 : prev - 1));
+  };
+
+  // Keyboard navigation for open modal
+  useEffect(() => {
+    if (selectedIdx === null) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowRight") handleNext();
+      else if (e.key === "ArrowLeft") handlePrev();
+      else if (e.key === "Escape") setSelectedIdx(null);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedIdx, filteredItems]);
 
   return (
     <div className="bg-[#f8fafc] min-h-screen text-slate-800 pb-16">
@@ -182,6 +206,7 @@ export default function Gallery() {
                 return (
                   <div
                     key={item.id}
+                    onClick={() => setSelectedIdx(itemIdx)}
                     className={`relative group overflow-hidden rounded-2xl shadow-sm border border-slate-100 transition-all duration-300 hover:shadow-xl cursor-pointer ${
                       item.isTall ? "h-[500px]" : "h-[238px]"
                     } ${itemIdx >= 6 ? "animate-fade-in-up" : ""}`}
@@ -231,6 +256,80 @@ export default function Gallery() {
           </div>
         )}
       </div>
+
+      {/* Full-Screen Slider Modal overlay */}
+      {selectedIdx !== null && (
+        <div className="fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center p-4 select-none">
+          {/* Close button */}
+          <button
+            onClick={() => setSelectedIdx(null)}
+            className="absolute right-6 top-6 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {/* Prev button */}
+          <button
+            onClick={handlePrev}
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          {/* Active Image container */}
+          <div className="max-h-[75vh] max-w-[90vw] md:max-w-[70vw] relative rounded-2xl overflow-hidden shadow-2xl animate-fade-in-up">
+            <img
+              src={filteredItems[selectedIdx].image}
+              alt={filteredItems[selectedIdx].title}
+              className="max-h-[75vh] w-auto object-contain mx-auto"
+            />
+          </div>
+
+          {/* Next button */}
+          <button
+            onClick={handleNext}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* Details & dots pager */}
+          <div className="mt-6 text-center">
+            <div className="flex items-center gap-3 justify-center">
+              <h2 className="text-white font-extrabold text-sm uppercase tracking-wider">
+                {filteredItems[selectedIdx].title}
+              </h2>
+              <span className="text-[9px] font-black text-white bg-[#1481b8] px-2.5 py-0.5 rounded-full tracking-wider uppercase">
+                {filteredItems[selectedIdx].category}
+              </span>
+            </div>
+
+            {/* Dots */}
+            <div className="flex gap-1.5 justify-center mt-3.5">
+              {filteredItems.map((_, dotIdx) => (
+                <button
+                  key={dotIdx}
+                  onClick={() => setSelectedIdx(dotIdx)}
+                  className={`w-1.5 h-1.5 rounded-full transition-colors cursor-pointer ${
+                    dotIdx === selectedIdx ? "bg-white" : "bg-white/20 hover:bg-white/40"
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Fractional Page Counter */}
+            <div className="text-[10px] font-bold text-white/50 tracking-widest mt-1.5">
+              {selectedIdx + 1} / {filteredItems.length}
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
