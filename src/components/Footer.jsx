@@ -173,7 +173,7 @@ export default function Footer() {
               Pune's Trusted Glass & Window Solutions Since 2009
             </div>
             <div className="flex items-center gap-6">
-              <a href="#admin" className="hover:text-white transition-colors duration-200">Admin</a>
+              <a href="/login" className="hover:text-white transition-colors duration-200">Admin</a>
               <span>© 2026 Vision Glass Creation. All rights reserved.</span>
             </div>
           </div>

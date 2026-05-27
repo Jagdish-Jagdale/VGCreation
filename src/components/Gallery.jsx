@@ -1,91 +1,116 @@
 import { useState, useEffect } from "react";
-import architectsImg from "../assets/architects.png";
-import buildersImg from "../assets/builders.png";
-import commercialImg from "../assets/commercial.png";
+import gallery1 from "../assets/gallery1.jpeg";
+import gallery2 from "../assets/gallery2.jpeg";
+import gallery3 from "../assets/gallery3.jpeg";
+import gallery4 from "../assets/gallery4.jpeg";
+import gallery5 from "../assets/gallery5.jpeg";
+import gallery6 from "../assets/gallery6.jpeg";
+import gallery7 from "../assets/gallery7.jpeg";
+import gallery8 from "../assets/gallery8.jpeg";
+import gallery9 from "../assets/gallery9.jpeg";
+import gallery10 from "../assets/gallery10.jpeg";
+import gallery11 from "../assets/gallery11.jpeg";
+import gallery12 from "../assets/gallery12.jpeg";
+import gallery13 from "../assets/gallery13.jpeg";
+import gallery14 from "../assets/gallery14.jpeg";
 
 const items = [
   {
     id: 1,
     category: "COMMERCIAL",
     title: "Structural Glass Facade",
-    image: "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=800&q=80",
+    image: gallery1,
     isTall: true,
   },
   {
     id: 2,
-    category: "COMMERCIAL",
-    title: "Architectural Planning",
-    image: architectsImg,
+    category: "RESIDENTIAL",
+    title: "Luxury Glass Railings",
+    image: gallery2,
     isTall: false,
   },
   {
     id: 3,
     category: "COMMERCIAL",
-    title: "Corporate Tower Glazing",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+    title: "Corporate Office Partitions",
+    image: gallery3,
     isTall: false,
   },
   {
     id: 4,
     category: "RESIDENTIAL",
-    title: "Glass Balcony Railings",
-    image: buildersImg,
+    title: "Modern Shower Enclosure",
+    image: gallery4,
     isTall: true,
   },
   {
     id: 5,
     category: "COMMERCIAL",
-    title: "Office Glass Partition",
-    image: commercialImg,
+    title: "Commercial Entrance Canopy",
+    image: gallery5,
     isTall: true,
   },
   {
     id: 6,
     category: "RESIDENTIAL",
-    title: "Frameless Shower Cubicle",
-    image: "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=800&q=80",
+    title: "Frameless Glass Balustrade",
+    image: gallery6,
     isTall: false,
   },
   {
     id: 7,
     category: "INDUSTRIAL",
     title: "Industrial Exterior Glazing",
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
+    image: gallery7,
     isTall: false,
   },
   {
     id: 8,
     category: "RESIDENTIAL",
-    title: "LED Mirror Installation",
-    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80",
+    title: "Premium LED Mirror",
+    image: gallery8,
     isTall: true,
   },
   {
     id: 9,
-    category: "INDUSTRIAL",
-    title: "Glass Entrance Canopy",
-    image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=800&q=80",
+    category: "COMMERCIAL",
+    title: "Spider Glass Facade",
+    image: gallery9,
     isTall: true,
   },
   {
     id: 10,
     category: "RESIDENTIAL",
-    title: "Acoustic Window Glazing",
-    image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80",
+    title: "Acoustic Window Glass",
+    image: gallery10,
     isTall: false,
   },
   {
     id: 11,
     category: "COMMERCIAL",
-    title: "Point-Supported Spider Glazing",
-    image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80",
+    title: "Office Glass Partition Wall",
+    image: gallery11,
     isTall: false,
   },
   {
     id: 12,
     category: "COMMERCIAL",
-    title: "Frosted Office Glass Film",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+    title: "Frosted Office Glazing",
+    image: gallery12,
+    isTall: true,
+  },
+  {
+    id: 13,
+    category: "INDUSTRIAL",
+    title: "Industrial Glass Skylight",
+    image: gallery13,
+    isTall: false,
+  },
+  {
+    id: 14,
+    category: "RESIDENTIAL",
+    title: "Designer Decorative Mirror",
+    image: gallery14,
     isTall: true,
   },
 ];
@@ -93,12 +118,20 @@ const items = [
 const categories = ["ALL", "COMMERCIAL", "INDUSTRIAL", "RESIDENTIAL"];
 
 export default function Gallery() {
+  const [galleryItems, setGalleryItems] = useState([]);
   const [activeFilter, setActiveFilter] = useState("ALL");
   const [visibleCount, setVisibleCount] = useState(6);
   const [selectedIdx, setSelectedIdx] = useState(null);
 
   useEffect(() => {
     document.title = "Gallery | Vision Glass Creation";
+    const saved = localStorage.getItem("vg_gallery");
+    if (saved) {
+      setGalleryItems(JSON.parse(saved));
+    } else {
+      localStorage.setItem("vg_gallery", JSON.stringify(items));
+      setGalleryItems(items);
+    }
   }, []);
 
   // Reset page size and close modal when filter changes to avoid bugs
@@ -107,7 +140,7 @@ export default function Gallery() {
     setSelectedIdx(null);
   }, [activeFilter]);
 
-  const filteredItems = items.filter(
+  const filteredItems = galleryItems.filter(
     (item) => activeFilter === "ALL" || item.category === activeFilter
   );
 
@@ -118,7 +151,7 @@ export default function Gallery() {
   });
 
   const loadMore = () => {
-    setVisibleCount(12);
+    setVisibleCount(filteredItems.length);
   };
 
   const handleNext = () => {

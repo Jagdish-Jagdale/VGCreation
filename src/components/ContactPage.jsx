@@ -1,6 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ContactPage() {
+  const [contactInfo, setContactInfo] = useState({
+    phone1: "+91 99219 17083",
+    phone2: "+91 78409 17083",
+    email: "visionglasscreation1@gmail.com",
+    address: "Plot No. 595, Ganganagar, Nigdi, Pimpri-Chinchwad 411044"
+  });
+
+  useEffect(() => {
+    const saved = localStorage.getItem("vg_contact");
+    if (saved) {
+      setContactInfo(JSON.parse(saved));
+    }
+  }, []);
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -57,6 +71,21 @@ export default function ContactPage() {
       setStatus("error");
       return;
     }
+
+    // Store in enquiries
+    const savedEnquiries = localStorage.getItem("vg_enquiries");
+    const enquiries = savedEnquiries ? JSON.parse(savedEnquiries) : [];
+    enquiries.unshift({
+      id: Date.now(),
+      name: formData.name.trim(),
+      phone: formData.phone,
+      email: formData.email.trim(),
+      requirement: formData.requirement,
+      message: formData.message.trim(),
+      date: new Date().toLocaleString(),
+      status: "unread"
+    });
+    localStorage.setItem("vg_enquiries", JSON.stringify(enquiries));
 
     // Simulate API call
     setStatus("success");
@@ -265,8 +294,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <span className="text-xs text-slate-500 font-bold uppercase tracking-wider block">Mobile</span>
-                    <a href="tel:+919921917083" className="text-slate-800 font-extrabold hover:text-[#1481b8] transition-colors text-sm">
-                      +91 99219 17083
+                    <a href={`tel:${contactInfo.phone1.replace(/\s+/g, '')}`} className="text-slate-800 font-extrabold hover:text-[#1481b8] transition-colors text-sm">
+                      {contactInfo.phone1}
                     </a>
                   </div>
                 </div>
@@ -280,8 +309,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <span className="text-xs text-slate-500 font-bold uppercase tracking-wider block">Office</span>
-                    <a href="tel:+917840917083" className="text-slate-800 font-extrabold hover:text-[#1481b8] transition-colors text-sm">
-                      +91 78409 17083
+                    <a href={`tel:${contactInfo.phone2.replace(/\s+/g, '')}`} className="text-slate-800 font-extrabold hover:text-[#1481b8] transition-colors text-sm">
+                      {contactInfo.phone2}
                     </a>
                   </div>
                 </div>
@@ -295,8 +324,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <span className="text-xs text-slate-500 font-bold uppercase tracking-wider block">Email</span>
-                    <a href="mailto:visionglasscreation1@gmail.com" className="text-slate-800 font-extrabold hover:text-[#1481b8] transition-colors break-all text-sm">
-                      visionglasscreation1@gmail.com
+                    <a href={`mailto:${contactInfo.email}`} className="text-slate-800 font-extrabold hover:text-[#1481b8] transition-colors break-all text-sm">
+                      {contactInfo.email}
                     </a>
                   </div>
                 </div>
@@ -312,7 +341,7 @@ export default function ContactPage() {
                   <div>
                     <span className="text-xs text-slate-500 font-bold uppercase tracking-wider block">Visit Factory / Office</span>
                     <a href={mapsSearchUrl} target="_blank" rel="noopener noreferrer" className="text-slate-800 font-extrabold hover:text-[#1481b8] transition-colors leading-relaxed text-sm">
-                      Plot No. 595, Ganganagar, Nigdi, Pimpri-Chinchwad 411044
+                      {contactInfo.address}
                     </a>
                   </div>
                 </div>

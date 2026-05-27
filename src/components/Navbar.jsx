@@ -12,6 +12,19 @@ export default function Navbar({ currentPath }) {
     return "home";
   });
   const clickLock = useRef(false); // prevents observer overriding a click
+  const [phone, setPhone] = useState("+91 99219 17083");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("vg_home");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.navbarPhone) setPhone(parsed.navbarPhone);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, []);
 
   const links = ["Home", "About", "Services", "Gallery"];
 
@@ -119,14 +132,14 @@ export default function Navbar({ currentPath }) {
 
           {/* Phone number */}
           <a
-            href="tel:+919921917083"
+            href={`tel:${phone.replace(/\s+/g, "")}`}
             className="flex items-center gap-2 text-gray-700 hover:text-[#1481b8] transition-colors font-medium text-sm"
           >
             <svg className="w-4 h-4 text-[#1481b8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                 d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
             </svg>
-            +91 99219 17083
+            {phone}
           </a>
 
           {/* Contact Us button */}
@@ -179,7 +192,7 @@ export default function Navbar({ currentPath }) {
           {/* Phone */}
           <li>
             <a
-              href="tel:+919921917083"
+              href={`tel:${phone.replace(/\s+/g, "")}`}
               className="flex items-center gap-2 pl-3 py-1 text-gray-700 font-medium hover:text-[#1481b8] transition-colors"
               onClick={() => setOpen(false)}
             >
@@ -187,7 +200,7 @@ export default function Navbar({ currentPath }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
-              +91 99219 17083
+              {phone}
             </a>
           </li>
  

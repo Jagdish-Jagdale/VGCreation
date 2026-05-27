@@ -1,4 +1,9 @@
 import { useEffect, useState } from "react";
+import windowsImg from "../assets/Aluminium & UPVC Windows.jpg";
+import mirrorsImg from "../assets/Decorative & LED Mirrors.jpg";
+import facadeImg from "../assets/Structural & Semi-Structural Facade Work.jpg";
+import interiorImg from "../assets/Complete Glass Interior Solutions.jpeg";
+import glazingImg from "../assets/Glass Glazing.jpg";
 
 const services = [
   {
@@ -8,6 +13,7 @@ const services = [
     description:
       "Durable, weather-resistant window frames and partition systems for all building types — residential to industrial.",
     features: ["ALUMINIUM", "UPVC", "CASEMENT", "SLIDING"],
+    image: windowsImg,
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -22,6 +28,7 @@ const services = [
     description:
       "Backlit LED mirrors, decorative mirrors, vastu mirrors and custom mirror installations for all spaces.",
     features: ["LED BACKLIT", "DECORATIVE", "VASTU", "CUSTOM SIZE"],
+    image: mirrorsImg,
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -36,6 +43,7 @@ const services = [
     description:
       "High-performance structural and semi-structural exterior glass facade systems for commercial buildings and IT parks.",
     features: ["STRUCTURAL", "SEMI-STRUCTURAL", "CURTAIN WALL", "SPIDER GLASS"],
+    image: facadeImg,
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -50,6 +58,7 @@ const services = [
     description:
       "Custom glass shelving, cabinets, display units and full glass interior fitouts tailored to your design.",
     features: ["SHELVING", "CABINETS", "PARTITIONS", "FITOUTS"],
+    image: interiorImg,
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -64,6 +73,7 @@ const services = [
     description:
       "Toughened glass glazing and composite ACP panel installations for building exteriors and interiors.",
     features: ["TOUGHENED GLASS", "ACP PANEL", "EXTERIOR", "INTERIOR"],
+    image: glazingImg,
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -78,6 +88,7 @@ const services = [
     description:
       "Modern and secure glass railing systems for balconies, staircases, and terraces, offering uninterrupted views.",
     features: ["BALCONY", "STAIRCASE", "FRAMELESS", "STAINLESS STEEL"],
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -92,6 +103,7 @@ const services = [
     description:
       "Premium sliding or openable frameless glass shower cubicles and partitions, custom fit for modern bathrooms.",
     features: ["FRAMELESS", "SLIDING", "OPENABLE", "TEMPERED GLASS"],
+    image: "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=800&q=80",
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -106,6 +118,7 @@ const services = [
     description:
       "High-durability laminated and toughened glass for skylights, glass roofs, and entrance canopies, providing natural light.",
     features: ["LAMINATED GLASS", "ENTRANCE CANOPY", "GLASS ROOF", "WEATHERPROOF"],
+    image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=800&q=80",
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -120,6 +133,7 @@ const services = [
     description:
       "Architectural glass canopies and pergola systems designed to protect entrances while allowing natural sunlight.",
     features: ["PERGOLA", "CANOPY", "LAMINATED", "TEMPERED"],
+    image: "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=800&q=80",
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -134,6 +148,7 @@ const services = [
     description:
       "Modern frameless toughened glass partitions for sleek, sound-insulated office cabins and conference rooms.",
     features: ["OFFICE CABIN", "FRAMELESS", "SOUND INSULATION", "TOUGHENED"],
+    image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80",
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -148,6 +163,7 @@ const services = [
     description:
       "Aesthetic point-supported spider glazing systems for high-rise commercial structures and double-height lobbies.",
     features: ["SPIDER GLASS", "POINT-SUPPORTED", "LOBBIES", "COMMERCIAL"],
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -162,6 +178,7 @@ const services = [
     description:
       "Frosted glass films, designer privacy films, and custom branding prints for interior partitions and office glass.",
     features: ["FROSTED FILM", "PRIVACY FILM", "OFFICE BRANDING", "CUSTOM PRINTS"],
+    image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80",
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -176,6 +193,7 @@ const services = [
     description:
       "Double or triple glazed acoustic window systems designed to filter out external traffic noise and maintain silence.",
     features: ["DOUBLE GLAZED", "ACOUSTIC GLASS", "NOISE CANCEL", "ENERGY EFFICIENT"],
+    image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=800&q=80",
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -190,6 +208,7 @@ const services = [
     description:
       "Heavy-duty automatic sensor glass doors, manual sliding doors, and patch-fitting entry systems.",
     features: ["AUTOMATIC SENSOR", "SLIDING SYSTEM", "PATCH FITTING", "ENTRYWAY"],
+    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -204,6 +223,7 @@ const services = [
     description:
       "Premium colored backpainted glass for kitchen dado, office wall panels, and magnetic glass write boards.",
     features: ["BACKPAINTED", "MAGNETIC WRITEBOARD", "KITCHEN DADO", "WALL CLADDING"],
+    image: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=800&q=80",
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -218,6 +238,7 @@ const services = [
     description:
       "Waterproof and high-durability PVC, WPC, and fiber doors suitable for toilets, bathrooms, and utility areas.",
     features: ["PVC DOORS", "FIBER DOORS", "WATERPROOF", "BATHROOM DOORS"],
+    image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=800&q=80",
     icon: (
       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -228,18 +249,26 @@ const services = [
 ];
 
 export default function Services() {
+  const [servicesList, setServicesList] = useState([]);
   const [visibleCount, setVisibleCount] = useState(8);
 
   useEffect(() => {
     document.title = "Services | Vision Glass Creation";
+    const saved = localStorage.getItem("vg_services");
+    if (saved) {
+      setServicesList(JSON.parse(saved));
+    } else {
+      localStorage.setItem("vg_services", JSON.stringify(services));
+      setServicesList(services);
+    }
   }, []);
 
   const loadMore = () => {
-    setVisibleCount(16);
+    setVisibleCount(servicesList.length);
   };
 
   return (
-    <section className="bg-white min-h-screen pb-16">
+    <section className="bg-white min-h-screen pb-28">
       {/* Hero Banner with Office Glass Walkway Background */}
       <div 
         className="relative py-28 text-white overflow-hidden text-center bg-cover bg-center mb-16"
@@ -274,7 +303,7 @@ export default function Services() {
       {/* Services Grid - 4 columns on desktop with uniform height cards, gap-8 */}
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {services.slice(0, visibleCount).map((service, index) => (
+          {servicesList.slice(0, visibleCount).map((service, index) => (
             <div
               key={service.id}
               className={`bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group ${
@@ -283,15 +312,14 @@ export default function Services() {
               style={index >= 8 ? { animationDelay: `${(index - 8) * 100}ms`, opacity: 0 } : {}}
             >
               {/* Card Header area */}
-              <div className="relative h-44 bg-gradient-to-br from-slate-50 to-slate-100/50 flex items-center justify-center border-b border-slate-100 group-hover:bg-[#1481b8]/5 transition-colors duration-300">
-                {/* Scaled icon inside circular white wrapper */}
-                <div className="p-4 bg-white rounded-2xl shadow-sm border border-slate-100 text-[#1481b8] group-hover:scale-110 transition-transform duration-300">
-                  {service.icon}
-                </div>
-                {/* Top Category Badge */}
-                <span className="absolute top-4 left-4 text-[10px] font-bold text-[#1481b8] bg-[#1481b8]/10 border border-[#1481b8]/10 px-3 py-1 rounded-full tracking-wider">
-                  {service.category}
-                </span>
+              <div className="relative h-56 overflow-hidden flex items-center justify-center border-b border-slate-100">
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                {/* Dark gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent"></div>
               </div>
 
               {/* Card Body area */}
@@ -341,7 +369,7 @@ export default function Services() {
         </div>
 
         {/* Load More Button */}
-        {visibleCount < services.length && (
+        {visibleCount < servicesList.length && (
           <div className="flex justify-center mt-16">
             <button
               onClick={loadMore}
@@ -360,6 +388,42 @@ export default function Services() {
             </button>
           </div>
         )}
+
+        {/* Custom Work Section in White/Light Theme */}
+        <div className="mt-20 bg-slate-50 border border-slate-100 rounded-3xl py-14 px-6 md:px-12 text-center max-w-5xl mx-auto shadow-sm relative overflow-hidden">
+          {/* Decorative background glow/shapes */}
+          <div className="absolute -top-12 -left-12 w-48 h-48 bg-sky-200/20 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-sky-200/20 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div className="relative z-10">
+            {/* Subheading/Badge */}
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <span className="h-px w-4 bg-[#1481b8]/30" />
+              <span className="text-[#1481b8] text-xs font-bold tracking-widest uppercase">
+                Custom Work
+              </span>
+              <span className="h-px w-4 bg-[#1481b8]/30" />
+            </div>
+
+            {/* Heading */}
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-4 uppercase">
+              Don't see what you're looking for?
+            </h2>
+
+            {/* Description */}
+            <p className="text-slate-600 text-sm md:text-base max-w-xl mx-auto mb-8 leading-relaxed">
+              We offer custom glass solutions. Get in touch and we'll find the perfect fit for your project.
+            </p>
+
+            {/* CTA Button */}
+            <a
+              href="/contact"
+              className="inline-flex items-center justify-center bg-[#1481b8] hover:bg-[#116e9d] text-white font-bold text-sm uppercase tracking-wider px-8 py-3.5 rounded-full transition-all duration-200 hover:scale-[1.02] shadow-md shadow-[#1481b8]/10 cursor-pointer"
+            >
+              Discuss Your Project
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   );

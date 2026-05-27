@@ -13,6 +13,8 @@ import ContactPage from "./components/ContactPage";
 import Services from "./components/Services";
 import Footer from "./components/Footer";
 import WhatsAppButton from "./components/WhatsAppButton";
+import Login from "./components/Login";
+import AdminPanel from "./components/AdminPanel";
 
 
 
@@ -94,6 +96,36 @@ export default function App() {
         <ContactPage />
         <Footer />
         <WhatsAppButton />
+      </div>
+    );
+  }
+
+  if (currentPath === "/login") {
+    if (localStorage.getItem("isAdmin") === "true") {
+      window.history.pushState(null, "", "/admin");
+      setTimeout(() => {
+        window.dispatchEvent(new PopStateEvent("popstate"));
+      }, 0);
+      return null;
+    }
+    return (
+      <div className="font-sans">
+        <Login />
+      </div>
+    );
+  }
+
+  if (currentPath === "/admin") {
+    if (localStorage.getItem("isAdmin") !== "true") {
+      window.history.pushState(null, "", "/login");
+      setTimeout(() => {
+        window.dispatchEvent(new PopStateEvent("popstate"));
+      }, 0);
+      return null;
+    }
+    return (
+      <div className="font-sans">
+        <AdminPanel />
       </div>
     );
   }
