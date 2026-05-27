@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import logo from "../assets/vision_glass_creation_logo.png";
+import symbol from "../assets/vision_glass_creation_symbol.png";
 
 // Default Fallbacks
 const defaultAbout = {
@@ -51,6 +52,7 @@ const defaultEnquiries = [
 ];
 
 export default function AdminPanel() {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
   const [homeData, setHomeData] = useState(defaultHome);
   const [image1Mode, setImage1Mode] = useState("link");
@@ -76,6 +78,21 @@ export default function AdminPanel() {
 
   // Form states for modals
   const [serviceForm, setServiceForm] = useState({ title: "", category: "", description: "", features: "", image: "" });
+  
+  // Custom What We Do and Promises States
+  const [whatWeDoMeta, setWhatWeDoMeta] = useState({
+    title: "Our Services",
+    description: "End-to-end glass solutions, crafted with precision and delivered with care across Pune's skyline."
+  });
+  const [promisesMeta, setPromisesMeta] = useState({
+    title1: "Complete glass solutions under one roof —",
+    title2: "quality guaranteed.",
+    description: "Professional finishing on every project, large or small. We deliver exceptional value through specialized craftsmanship, reliable delivery, and premium materials designed to elevate your architectural spaces.",
+    buttonLabel: "Start Your Project"
+  });
+  const [promisesList, setPromisesList] = useState([]);
+  const [promiseModal, setPromiseModal] = useState({ show: false, mode: "add", data: null });
+  const [promiseForm, setPromiseForm] = useState({ title: "", description: "" });
   const [galleryForm, setGalleryForm] = useState({ title: "", category: "", image: "", isTall: false });
 
   const triggerToast = (message, type = "success") => {
@@ -218,13 +235,111 @@ export default function AdminPanel() {
         console.error("Failed to parse vg_ticker_meta", e);
       }
     }
+
+    // What We Do Meta
+    const savedWhatWeDoMeta = localStorage.getItem("vg_whatwedo_meta");
+    if (savedWhatWeDoMeta) {
+      setWhatWeDoMeta(JSON.parse(savedWhatWeDoMeta));
+    }
+
+    // Promises Meta
+    const savedPromisesMeta = localStorage.getItem("vg_promises_meta");
+    if (savedPromisesMeta) {
+      setPromisesMeta(JSON.parse(savedPromisesMeta));
+    }
+
+    // Promises List
+    const savedPromisesList = localStorage.getItem("vg_promises_list");
+    if (savedPromisesList) {
+      setPromisesList(JSON.parse(savedPromisesList));
+    } else {
+      const defaultPromises = [
+        {
+          id: 1,
+          title: "One-Stop Glass Solution",
+          description: "Complete solutions from concept and design to fabrication and final installation, all under a single roof."
+        },
+        {
+          id: 2,
+          title: "Professional Installation",
+          description: "Our in-house team of certified specialists ensures safe, level, and structural alignment for every project."
+        },
+        {
+          id: 3,
+          title: "Trusted by 50+ Architects",
+          description: "The preferred, reliable creation partner for over 50 leading architects and premium builders in Pune."
+        },
+        {
+          id: 4,
+          title: "Guaranteed Workmanship",
+          description: "Uncompromising standards of durability, premium finishes, and meticulous attention to detail."
+        }
+      ];
+      localStorage.setItem("vg_promises_list", JSON.stringify(defaultPromises));
+      setPromisesList(defaultPromises);
+    }
   }, []);
 
   // Handlers for Homepage settings
   const handleHomeSave = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     localStorage.setItem("vg_home", JSON.stringify(homeData));
-    triggerToast("Homepage & Navbar settings saved successfully!");
+    localStorage.setItem("vg_whatwedo_meta", JSON.stringify(whatWeDoMeta));
+    localStorage.setItem("vg_promises_meta", JSON.stringify(promisesMeta));
+    triggerToast("All Homepage settings saved successfully!");
+  };
+
+  const handlePromiseSubmit = (e) => {
+    if (e) e.preventDefault();
+    if (promiseModal.mode === "add") {
+      if (promisesList.length >= 4) {
+        triggerToast("Only up to 4 promises can be added.", "error");
+        return;
+      }
+      const newPromise = {
+        id: Date.now(),
+        title: promiseForm.title,
+        description: promiseForm.description
+      };
+      const updated = [...promisesList, newPromise];
+      setPromisesList(updated);
+      localStorage.setItem("vg_promises_list", JSON.stringify(updated));
+      triggerToast("Promise added successfully!");
+    } else {
+      const updated = promisesList.map((p) => {
+        if (p.id === promiseModal.data.id) {
+          return {
+            ...p,
+            title: promiseForm.title,
+            description: promiseForm.description
+          };
+        }
+        return p;
+      });
+      setPromisesList(updated);
+      localStorage.setItem("vg_promises_list", JSON.stringify(updated));
+      triggerToast("Promise updated successfully!");
+    }
+    setPromiseModal({ show: false, mode: "add", data: null });
+    setPromiseForm({ title: "", description: "" });
+  };
+
+  const handleDeletePromise = (id) => {
+    if (window.confirm("Are you sure you want to delete this promise?")) {
+      const updated = promisesList.filter((p) => p.id !== id);
+      setPromisesList(updated);
+      localStorage.setItem("vg_promises_list", JSON.stringify(updated));
+      triggerToast("Promise deleted!", "error");
+    }
+  };
+
+  const openPromiseModal = (mode, data = null) => {
+    setPromiseModal({ show: true, mode, data });
+    if (mode === "edit" && data) {
+      setPromiseForm({ title: data.title, description: data.description });
+    } else {
+      setPromiseForm({ title: "", description: "" });
+    }
   };
 
   const handleImageUpload = (e, index) => {
@@ -422,15 +537,16 @@ export default function AdminPanel() {
           }`}>
           <span>{toast.message}</span>
         </div>
-      )}
-
-      {/* Left Sidebar */}
-      <aside className="fixed top-6 bottom-6 left-6 w-[240px] bg-white rounded-[20px] shadow-sm border border-slate-100/80 p-4 flex flex-col justify-between z-20">
+      )}      {/* Left Sidebar */}
+      <aside className={`fixed top-6 bottom-6 left-6 ${isSidebarCollapsed ? "w-[76px]" : "w-[240px]"} bg-white rounded-[20px] shadow-sm border border-slate-100/80 p-4 flex flex-col justify-between z-20 transition-all duration-300`}>
         <div>
           {/* Top Control Header & Sidebar Icon */}
-          <div className="flex items-center justify-end mb-6 px-1">
-            <button className="text-slate-400 hover:text-[#6340b2] transition-colors cursor-pointer">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <div className={`flex items-center mb-6 px-1 ${isSidebarCollapsed ? "justify-center" : "justify-end"}`}>
+            <button
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              className="text-slate-400 hover:text-[#6340b2] transition-colors cursor-pointer"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
                 <rect x="3" y="3" width="18" height="18" rx="2" />
                 <line x1="9" y1="3" x2="9" y2="21" />
               </svg>
@@ -439,14 +555,14 @@ export default function AdminPanel() {
 
           {/* Logo Brand Header */}
           <div className="flex flex-col items-center justify-center mb-4 px-1">
-            <div className="text-center">
-              <span className="text-[15px] font-extrabold tracking-wide text-slate-800 uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Vision Glass</span>
-              <br />
-              <span className="text-[13px] font-bold tracking-[0.15em] text-[#6340b2] uppercase" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Creation</span>
+            <div className="text-center flex justify-center items-center">
+              <img src={isSidebarCollapsed ? symbol : logo} alt="Logo" className={isSidebarCollapsed ? "h-8 w-8 object-contain" : "h-14 object-contain"} />
             </div>
-            <span className="text-[9px] font-extrabold tracking-[0.2em] text-[#6340b2] uppercase opacity-75 mt-1.5">
-              Admin Panel
-            </span>
+            {!isSidebarCollapsed && (
+              <span className="text-[9px] font-extrabold tracking-[0.2em] text-[#6340b2] uppercase opacity-75 mt-1.5">
+                Admin Panel
+              </span>
+            )}
             <div className="w-full border-t border-slate-100 mt-3"></div>
           </div>
 
@@ -454,7 +570,7 @@ export default function AdminPanel() {
           <nav className="space-y-1">
             <button
               onClick={() => setActiveTab("home")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "home"
+              className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center px-2" : "gap-2.5 px-3"} py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "home"
                 ? "text-[#6340b2] bg-violet-100/90 font-bold"
                 : "text-slate-500 hover:bg-slate-50/70 hover:text-slate-800 font-medium"
                 }`}
@@ -465,12 +581,12 @@ export default function AdminPanel() {
               <svg className={`w-4.5 h-4.5 shrink-0 transition-colors ${activeTab === "home" ? "text-[#6340b2]" : "text-slate-400"}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
               </svg>
-              Home Page
+              {!isSidebarCollapsed && <span>Home Page</span>}
             </button>
 
             <button
               onClick={() => setActiveTab("about")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "about"
+              className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center px-2" : "gap-2.5 px-3"} py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "about"
                 ? "text-[#6340b2] bg-violet-100/90 font-bold"
                 : "text-slate-500 hover:bg-slate-50/70 hover:text-slate-800 font-medium"
                 }`}
@@ -481,12 +597,12 @@ export default function AdminPanel() {
               <svg className={`w-4.5 h-4.5 shrink-0 transition-colors ${activeTab === "about" ? "text-[#6340b2]" : "text-slate-400"}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              About Settings
+              {!isSidebarCollapsed && <span>About Settings</span>}
             </button>
 
             <button
               onClick={() => setActiveTab("services")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "services"
+              className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center px-2" : "gap-2.5 px-3"} py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "services"
                 ? "text-[#6340b2] bg-violet-100/90 font-bold"
                 : "text-slate-500 hover:bg-slate-50/70 hover:text-slate-800 font-medium"
                 }`}
@@ -497,12 +613,12 @@ export default function AdminPanel() {
               <svg className={`w-4.5 h-4.5 shrink-0 transition-colors ${activeTab === "services" ? "text-[#6340b2]" : "text-slate-400"}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
-              Manage Services
+              {!isSidebarCollapsed && <span>Manage Services</span>}
             </button>
 
             <button
               onClick={() => setActiveTab("gallery")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "gallery"
+              className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center px-2" : "gap-2.5 px-3"} py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "gallery"
                 ? "text-[#6340b2] bg-violet-100/90 font-bold"
                 : "text-slate-500 hover:bg-slate-50/70 hover:text-slate-800 font-medium"
                 }`}
@@ -513,12 +629,12 @@ export default function AdminPanel() {
               <svg className={`w-4.5 h-4.5 shrink-0 transition-colors ${activeTab === "gallery" ? "text-[#6340b2]" : "text-slate-400"}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              Manage Gallery
+              {!isSidebarCollapsed && <span>Manage Gallery</span>}
             </button>
 
             <button
               onClick={() => setActiveTab("contact")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "contact"
+              className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center px-2" : "gap-2.5 px-3"} py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "contact"
                 ? "text-[#6340b2] bg-violet-100/90 font-bold"
                 : "text-slate-500 hover:bg-slate-50/70 hover:text-slate-800 font-medium"
                 }`}
@@ -529,12 +645,12 @@ export default function AdminPanel() {
               <svg className={`w-4.5 h-4.5 shrink-0 transition-colors ${activeTab === "contact" ? "text-[#6340b2]" : "text-slate-400"}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
-              Contact Settings
+              {!isSidebarCollapsed && <span>Contact Settings</span>}
             </button>
 
             <button
               onClick={() => setActiveTab("enquiries")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "enquiries"
+              className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center px-2" : "gap-2.5 px-3"} py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "enquiries"
                 ? "text-[#6340b2] bg-violet-100/90 font-bold"
                 : "text-slate-500 hover:bg-slate-50/70 hover:text-slate-800 font-medium"
                 }`}
@@ -545,9 +661,9 @@ export default function AdminPanel() {
               <svg className={`w-4.5 h-4.5 shrink-0 transition-colors ${activeTab === "enquiries" ? "text-[#6340b2]" : "text-slate-400"}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2m-3 0h-5.5" />
               </svg>
-              Enquiries Log
+              {!isSidebarCollapsed && <span>Enquiries Log</span>}
               {enquiries.filter((e) => e.status === "unread").length > 0 && (
-                <span className="absolute right-3 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                <span className={isSidebarCollapsed ? "absolute top-1 right-1 bg-red-500 text-white text-[9px] w-4 h-4 flex items-center justify-center rounded-full font-bold animate-pulse" : "absolute right-3 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold"}>
                   {enquiries.filter((e) => e.status === "unread").length}
                 </span>
               )}
@@ -560,18 +676,18 @@ export default function AdminPanel() {
           <div className="w-full border-t border-slate-100 my-3"></div>
           <button
             onClick={() => setShowLogoutModal(true)}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 hover:bg-red-100/85 text-red-600 hover:text-red-700 transition-colors w-full text-left font-bold text-xs cursor-pointer border border-red-100/40"
+            className={`flex items-center ${isSidebarCollapsed ? "justify-center px-2" : "gap-2 px-3"} py-2 rounded-lg bg-red-50 hover:bg-red-100/85 text-red-600 hover:text-red-700 transition-colors w-full text-left font-bold text-xs cursor-pointer border border-red-100/40`}
           >
             <svg className="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            Log out
+            {!isSidebarCollapsed && <span>Log out</span>}
           </button>
         </div>
       </aside>
 
       {/* Right Side Workspace Area */}
-      <main className="flex-grow pl-[258px] min-h-screen flex flex-col">
+      <main className={`flex-grow ${isSidebarCollapsed ? "pl-[112px]" : "pl-[258px]"} min-h-screen flex flex-col transition-all duration-300`}>
         {/* Content Body */}
         <div className="p-8 pt-12 flex-grow">
 
@@ -585,8 +701,8 @@ export default function AdminPanel() {
                   <p className="text-sm text-slate-400 font-medium mt-1">Configure the main hero details, badges, CTA button labels, and showcase images.</p>
                 </div>
                 <button
-                  type="submit"
-                  form="home-form"
+                  type="button"
+                  onClick={handleHomeSave}
                   className="bg-[#6340b2] hover:bg-[#5231a3] text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-violet-500/10 cursor-pointer"
                 >
                   Save Changes
@@ -594,8 +710,11 @@ export default function AdminPanel() {
               </div>
 
               {/* Homepage Hero Settings */}
-              <div className="bg-white rounded-2xl border border-violet-100 shadow-sm p-6">
+              <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-violet-100/60 shadow-sm p-6">
                 <form id="home-form" onSubmit={handleHomeSave} className="space-y-5">
+                  <div className="border-b border-slate-100 pb-3 mb-2">
+                    <h4 className="text-sm font-bold text-slate-800 uppercase tracking-wider">Hero Section Settings</h4>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Badge Title</label>
@@ -778,15 +897,27 @@ export default function AdminPanel() {
               </div>
 
               {/* Services Slider Settings */}
-              <div className="bg-white rounded-2xl border border-violet-100 shadow-sm p-6">
-                <div className="mb-4">
-                  <h3 className="text-lg font-bold text-slate-800">Services Slider Settings</h3>
-                  <p className="text-xs text-slate-400 font-medium">Manage text items that scroll on the homepage services ticker.</p>
+              <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-violet-100/60 shadow-sm p-6">
+                <div className="flex items-center justify-between mb-4 gap-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-800">Services Slider Settings</h3>
+                    <p className="text-xs text-slate-400 font-medium">Manage text items that scroll on the homepage services ticker.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setTickerModal({ show: true, text: "" })}
+                    className="inline-flex items-center gap-1.5 bg-violet-50 hover:bg-violet-100/80 text-[#6340b2] px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer border border-violet-100 shrink-0"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Add Service
+                  </button>
                 </div>
 
                 {/* Ticker Items */}
                 {tickerItems.length > 0 && (
-                  <div className="flex flex-wrap gap-2.5 max-h-48 overflow-y-auto p-2 bg-slate-50 rounded-xl border border-slate-100 mb-4">
+                  <div className="flex flex-wrap gap-2.5 max-h-48 overflow-y-auto p-2 bg-slate-50 rounded-xl border border-slate-100 mb-4 mt-4">
                     {tickerItems.map((item, index) => (
                       <div
                         key={index}
@@ -811,76 +942,224 @@ export default function AdminPanel() {
                 {tickerItems.length === 0 && (
                   <p className="text-xs text-slate-400 font-medium mb-4">No items added to the services slider yet.</p>
                 )}
-
-                {/* Add Service Button */}
-                <button
-                  type="button"
-                  onClick={() => setTickerModal({ show: true, text: "" })}
-                  className="inline-flex items-center gap-1.5 bg-violet-50 hover:bg-violet-100/80 text-[#6340b2] px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer border border-violet-100"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                  </svg>
-                  Add Service
-                </button>
               </div>
 
-              {/* Recent Enquiries Box */}
-              <div className="bg-white rounded-2xl border border-violet-100 shadow-sm p-6">
-                <div className="flex items-center justify-between mb-6">
+              {/* What We Do Settings Section */}
+              <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-violet-100/60 shadow-sm p-6">
+                <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
                   <div>
-                    <h3 className="text-lg font-bold text-slate-800">Recent Customer Enquiries</h3>
-                    <p className="text-xs text-slate-400 font-medium">Latest quotation submissions from Contact Page</p>
+                    <h3 className="text-lg font-bold text-slate-800">What We Do Settings</h3>
+                    <p className="text-xs text-slate-400 font-medium">Configure title and description for the What We Do (Our Services) section.</p>
                   </div>
-                  <button
-                    onClick={() => setActiveTab("enquiries")}
-                    className="text-xs font-bold text-[#6340b2] hover:underline"
-                  >
-                    View All Enquiries →
-                  </button>
                 </div>
 
-                {enquiries.length === 0 ? (
-                  <p className="text-sm text-slate-400 py-6 text-center font-medium">No customer inquiries received yet.</p>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm text-slate-500">
-                      <thead className="text-xs text-slate-700 uppercase bg-slate-50 font-bold">
-                        <tr>
-                          <th className="px-6 py-4">Client Name</th>
-                          <th className="px-6 py-4">Phone / Email</th>
-                          <th className="px-6 py-4">Requirement</th>
-                          <th className="px-6 py-4">Date</th>
-                          <th className="px-6 py-4">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-violet-50">
-                        {enquiries.slice(0, 5).map((enq) => (
-                          <tr key={enq.id} className="hover:bg-slate-50/50">
-                            <td className="px-6 py-4 font-bold text-slate-800">{enq.name}</td>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Section Title</label>
+                    <input
+                      type="text"
+                      value={whatWeDoMeta.title}
+                      onChange={(e) => setWhatWeDoMeta({ ...whatWeDoMeta, title: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#6340b2] font-medium"
+                      placeholder="e.g. Our Services"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Section Description</label>
+                    <input
+                      type="text"
+                      value={whatWeDoMeta.description}
+                      onChange={(e) => setWhatWeDoMeta({ ...whatWeDoMeta, description: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#6340b2] font-medium"
+                      placeholder="e.g. End-to-end glass solutions..."
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Table with 6 Sr Nos */}
+                <div className="overflow-x-auto border border-slate-100 rounded-xl">
+                  <table className="w-full text-left text-sm text-slate-500">
+                    <thead className="text-xs text-slate-700 uppercase bg-slate-50 font-bold">
+                      <tr>
+                        <th className="px-6 py-3.5">Sr. No</th>
+                        <th className="px-6 py-3.5">Category</th>
+                        <th className="px-6 py-3.5">Service Title</th>
+                        <th className="px-6 py-3.5">Description</th>
+                        <th className="px-6 py-3.5 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {[0, 1, 2, 3, 4, 5].map((index) => {
+                        const s = services[index];
+                        return (
+                          <tr key={index + 1} className="hover:bg-slate-50/50">
+                            <td className="px-6 py-4 font-bold text-slate-800">{index + 1}</td>
                             <td className="px-6 py-4">
-                              <span className="block text-slate-700 font-medium">{enq.phone}</span>
-                              <span className="block text-xs text-slate-400">{enq.email || "No Email"}</span>
+                              {s ? (
+                                <span className="bg-violet-50 text-[#6340b2] text-[10px] font-bold px-2 py-0.5 rounded uppercase">
+                                  {s.category}
+                                </span>
+                              ) : (
+                                <span className="text-slate-400 text-xs">-</span>
+                              )}
                             </td>
-                            <td className="px-6 py-4">
-                              <span className="bg-violet-50 text-[#6340b2] text-[10px] font-bold px-2 py-0.5 rounded uppercase">
-                                {enq.requirement}
-                              </span>
+                            <td className="px-6 py-4 font-semibold text-slate-700">
+                              {s ? s.title : <span className="text-slate-400 font-normal italic">Empty slot</span>}
                             </td>
-                            <td className="px-6 py-4 text-xs text-slate-400 font-medium">{enq.date}</td>
-                            <td className="px-6 py-4">
-                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${enq.status === "unread" ? "bg-red-50 text-red-600" : "bg-green-50 text-green-600"
-                                }`}>
-                                {enq.status}
-                              </span>
+                            <td className="px-6 py-4 text-xs text-slate-500 max-w-xs truncate">
+                              {s ? s.description : "-"}
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              {s ? (
+                                <div className="flex gap-2 justify-end">
+                                  <button
+                                    onClick={() => openServiceModal("edit", s)}
+                                    className="text-xs font-bold text-[#6340b2] hover:text-[#5231a3] cursor-pointer"
+                                  >
+                                    Edit
+                                  </button>
+                                  <span className="text-slate-200">|</span>
+                                  <button
+                                    onClick={() => handleDeleteService(s.id)}
+                                    className="text-xs font-bold text-red-600 hover:text-red-700 cursor-pointer"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => openServiceModal("add")}
+                                  className="text-xs font-bold text-[#6340b2] hover:underline cursor-pointer"
+                                >
+                                  + Add Service
+                                </button>
+                              )}
                             </td>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Our Promises Settings Section */}
+              <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-violet-100/60 shadow-sm p-6">
+                <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-800">Our Promises Settings</h3>
+                    <p className="text-xs text-slate-400 font-medium">Configure section headings, description, CTA, and up to 4 key promises.</p>
+                  </div>
+                  <div className="flex gap-3 items-center">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (promisesList.length >= 4) {
+                          triggerToast("Maximum of 4 promises are allowed. Please delete or edit existing ones.", "error");
+                        } else {
+                          openPromiseModal("add");
+                        }
+                      }}
+                      className="inline-flex items-center gap-1 bg-violet-50 hover:bg-violet-100/80 text-[#6340b2] px-3.5 py-2 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer border border-violet-100 shrink-0"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                      </svg>
+                      Add Promise
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Heading Title 1</label>
+                    <input
+                      type="text"
+                      value={promisesMeta.title1}
+                      onChange={(e) => setPromisesMeta({ ...promisesMeta, title1: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#6340b2] font-medium"
+                      placeholder="e.g. Complete glass solutions..."
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Heading Title 2 (Color Highlighted)</label>
+                    <input
+                      type="text"
+                      value={promisesMeta.title2}
+                      onChange={(e) => setPromisesMeta({ ...promisesMeta, title2: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#6340b2] font-medium"
+                      placeholder="e.g. quality guaranteed."
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Button Label</label>
+                    <input
+                      type="text"
+                      value={promisesMeta.buttonLabel}
+                      onChange={(e) => setPromisesMeta({ ...promisesMeta, buttonLabel: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#6340b2] font-medium"
+                      placeholder="e.g. Start Your Project"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Section Description Paragraph</label>
+                    <textarea
+                      rows={2}
+                      value={promisesMeta.description}
+                      onChange={(e) => setPromisesMeta({ ...promisesMeta, description: e.target.value })}
+                      className="w-full px-4 py-2 rounded-xl border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#6340b2] font-medium resize-none"
+                      placeholder="Enter description paragraph..."
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Promises List Display */}
+                <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-3">Current Promises (Max 4)</h4>
+                {promisesList.length === 0 ? (
+                  <p className="text-xs text-slate-400 font-medium py-3">No promises added yet. Click 'Add Promise' to add one.</p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {promisesList.map((p, index) => (
+                      <div key={p.id || index} className="p-4 bg-slate-50/40 rounded-xl border border-slate-100/50 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] font-bold text-slate-400">Promise #{index + 1}</span>
+                            <div className="flex gap-2 items-center text-xs font-bold">
+                              <button
+                                type="button"
+                                onClick={() => openPromiseModal("edit", p)}
+                                className="text-[#6340b2] hover:underline cursor-pointer"
+                              >
+                                Edit
+                              </button>
+                              <span className="text-slate-300">|</span>
+                              <button
+                                type="button"
+                                onClick={() => handleDeletePromise(p.id)}
+                                className="text-red-600 hover:underline cursor-pointer"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                          <h5 className="text-sm font-bold text-slate-800 mb-1">{p.title}</h5>
+                          <p className="text-xs text-slate-500 leading-relaxed">{p.description}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
+
             </div>
           )}
 
@@ -1015,19 +1294,22 @@ export default function AdminPanel() {
                             ))}
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-right space-x-2">
-                          <button
-                            onClick={() => openServiceModal("edit", srv)}
-                            className="text-xs font-bold text-violet-700 hover:text-violet-900 bg-violet-50 px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteService(srv.id)}
-                            className="text-xs font-bold text-red-700 hover:text-red-900 bg-red-50 px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
-                          >
-                            Delete
-                          </button>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex gap-2 justify-end items-center font-bold text-xs">
+                            <button
+                              onClick={() => openServiceModal("edit", srv)}
+                              className="text-[#6340b2] hover:underline cursor-pointer"
+                            >
+                              Edit
+                            </button>
+                            <span className="text-slate-300">|</span>
+                            <button
+                              onClick={() => handleDeleteService(srv.id)}
+                              className="text-red-600 hover:underline cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -1425,22 +1707,22 @@ export default function AdminPanel() {
                           <td className="px-6 py-4 text-xs text-slate-400 font-medium">
                             {enq.date}
                           </td>
-                          <td className="px-6 py-4 text-right space-x-2 shrink-0">
-                            <button
-                              onClick={() => handleToggleEnquiryStatus(enq.id)}
-                              className={`text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${enq.status === "unread"
-                                ? "bg-green-50 text-green-700 hover:bg-green-100"
-                                : "bg-amber-50 text-amber-700 hover:bg-amber-100"
-                                }`}
-                            >
-                              {enq.status === "unread" ? "Mark Read" : "Mark Unread"}
-                            </button>
-                            <button
-                              onClick={() => handleDeleteEnquiry(enq.id)}
-                              className="text-[10px] font-bold bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
-                            >
-                              Delete
-                            </button>
+                          <td className="px-6 py-4 text-right">
+                            <div className="flex gap-2 justify-end items-center font-bold text-xs">
+                              <button
+                                onClick={() => handleToggleEnquiryStatus(enq.id)}
+                                className={`${enq.status === "unread" ? "text-green-600" : "text-amber-600"} hover:underline cursor-pointer`}
+                              >
+                                {enq.status === "unread" ? "Mark Read" : "Mark Unread"}
+                              </button>
+                              <span className="text-slate-300">|</span>
+                              <button
+                                onClick={() => handleDeleteEnquiry(enq.id)}
+                                className="text-red-600 hover:underline cursor-pointer"
+                              >
+                                Delete
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -1552,6 +1834,68 @@ export default function AdminPanel() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add/Edit Promise Modal */}
+      {promiseModal.show && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
+            <button
+              onClick={() => setPromiseModal({ show: false, mode: "add", data: null })}
+              className="absolute top-6 right-6 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            <h3 className="text-xl font-extrabold text-slate-900 mb-6 uppercase tracking-tight">
+              {promiseModal.mode === "add" ? "Add Promise" : "Edit Promise"}
+            </h3>
+
+            <form onSubmit={handlePromiseSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Promise Title</label>
+                <input
+                  type="text"
+                  value={promiseForm.title}
+                  onChange={(e) => setPromiseForm({ ...promiseForm, title: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#6340b2]"
+                  placeholder="e.g. Professional Installation"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Description</label>
+                <textarea
+                  rows={3}
+                  value={promiseForm.description}
+                  onChange={(e) => setPromiseForm({ ...promiseForm, description: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#6340b2] resize-none"
+                  placeholder="Enter details..."
+                  required
+                />
+              </div>
+
+              <div className="flex gap-3 justify-end pt-4">
+                <button
+                  type="button"
+                  onClick={() => setPromiseModal({ show: false, mode: "add", data: null })}
+                  className="px-5 py-2.5 border border-slate-200 text-slate-500 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-slate-50 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 bg-[#6340b2] hover:bg-[#5231a3] text-white rounded-xl font-bold text-xs uppercase tracking-wider cursor-pointer"
+                >
+                  {promiseModal.mode === "add" ? "Add Promise" : "Save Changes"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

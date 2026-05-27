@@ -80,6 +80,10 @@ const services = [
 
 export default function WhatWeDo() {
   const [servicesList, setServicesList] = useState([]);
+  const [meta, setMeta] = useState({
+    title: "Our Services",
+    description: "End-to-end glass solutions, crafted with precision and delivered with care across Pune's skyline."
+  });
 
   useEffect(() => {
     const saved = localStorage.getItem("vg_services");
@@ -87,6 +91,11 @@ export default function WhatWeDo() {
       setServicesList(JSON.parse(saved));
     } else {
       setServicesList(services);
+    }
+
+    const savedMeta = localStorage.getItem("vg_whatwedo_meta");
+    if (savedMeta) {
+      setMeta(JSON.parse(savedMeta));
     }
   }, []);
 
@@ -105,10 +114,10 @@ export default function WhatWeDo() {
 
         {/* Heading */}
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-3">
-          Our Services
+          {meta.title}
         </h2>
         <p className="text-center text-gray-500 max-w-md mx-auto mb-12">
-          End-to-end glass solutions, crafted with precision and delivered with care across Pune's skyline.
+          {meta.description}
         </p>
 
         {/* Cards grid */}
