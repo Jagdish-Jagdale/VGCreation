@@ -1,21 +1,16 @@
 import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
-import Home from "./components/Home";
-import ServicesTicker from "./components/ServicesTicker";
-import WhatWeDo from "./components/WhatWeDo";
-import About from "./components/About";
-import Promises from "./components/Promises";
-import WhoWeServe from "./components/WhoWeServe";
-import ReferClient from "./components/ReferClient";
-import WorkWithExperts from "./components/WorkWithExperts";
-import Gallery from "./components/Gallery";
-import ContactPage from "./components/ContactPage";
-import Services from "./components/Services";
 import Footer from "./components/Footer";
 import WhatsAppButton from "./components/WhatsAppButton";
-import Login from "./components/Login";
-import AdminPanel from "./components/AdminPanel";
 import ProtectedRoute from "./components/ProtectedRoute";
+
+import LandingPage from "./pages/LandingPage";
+import About from "./pages/About";
+import Gallery from "./pages/Gallery";
+import ContactPage from "./pages/ContactPage";
+import Services from "./pages/Services";
+import Login from "./pages/Login";
+import AdminPanel from "./pages/AdminPanel";
 
 
 
@@ -163,14 +158,7 @@ export default function App() {
   return (
     <div className="font-sans">
       <Navbar currentPath={currentPath} />
-      <Home />
-      <ServicesTicker />
-      <WhatWeDo />
-      <Promises />
-      <WhoWeServe />
-      <ReferClient />
-      <WorkWithExperts />
-
+      <LandingPage />
       <Footer />
       <WhatsAppButton />
     </div>
