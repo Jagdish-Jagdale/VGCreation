@@ -1,12 +1,18 @@
 import { useState, useEffect } from "react";
 import logo from "../assets/vision_glass_creation_logo.png";
 import bgImage from "../assets/gallery10.jpeg";
+import { auth, db } from "../firebase";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("Admin");
   const [showPassword, setShowPassword] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
   const [toast, setToast] = useState({ show: false, message: "", type: "error" });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     document.title = "Admin Login | Vision Glass Creation";
@@ -26,7 +32,7 @@ export default function Login() {
     setToast({ show: true, message, type });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // 1. Mandatory check
@@ -42,16 +48,56 @@ export default function Login() {
       return;
     }
 
-    // 3. Credentials check
-    if (email === "admin@gmail.com" && password === "Admin@123") {
-      triggerToast("Login successful! Redirecting...", "success");
-      localStorage.setItem("isAdmin", "true");
-      setTimeout(() => {
-        window.history.pushState(null, "", "/admin");
-        window.dispatchEvent(new PopStateEvent("popstate"));
-      }, 1500);
-    } else {
-      triggerToast("Invalid email or password.", "error");
+    setIsLoading(true);
+
+    try {
+      if (isRegistering) {
+        // --- REGISTRATION LOGIC ---
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const newAdminId = userCredential.user.uid;
+        
+        // Save to Firestore
+        await setDoc(doc(db, "admins", newAdminId), {
+          email: email,
+          role: role,
+          password: password, // As requested, saving password to DB (Note: Not recommended for production)
+          createdAt: new Date().toISOString()
+        });
+
+        triggerToast("Registration successful! Redirecting...", "success");
+        localStorage.setItem("isAdmin", "true");
+        setTimeout(() => {
+          window.history.pushState(null, "", "/admin");
+          window.dispatchEvent(new PopStateEvent("popstate"));
+        }, 1500);
+
+      } else {
+        // --- LOGIN LOGIC ---
+        // Hardcoded admin check (fallback)
+        if (email === "admin@gmail.com" && password === "Admin@123") {
+          triggerToast("Login successful! Redirecting...", "success");
+          localStorage.setItem("isAdmin", "true");
+          setTimeout(() => {
+            window.history.pushState(null, "", "/admin");
+            window.dispatchEvent(new PopStateEvent("popstate"));
+          }, 1500);
+          return;
+        }
+
+        // Firebase Auth login
+        await signInWithEmailAndPassword(auth, email, password);
+        triggerToast("Login successful! Redirecting...", "success");
+        localStorage.setItem("isAdmin", "true");
+        setTimeout(() => {
+          window.history.pushState(null, "", "/admin");
+          window.dispatchEvent(new PopStateEvent("popstate"));
+        }, 1500);
+      }
+    } catch (error) {
+      console.error("Auth error:", error);
+      triggerToast(error.message, "error");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -127,7 +173,7 @@ export default function Login() {
       </div>
 
       {/* Right Column: Form Container */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 bg-white relative lg:rounded-l-[40px] z-10 lg:ml-auto">
+      <div className="w-full lg:w-1/2 flex-1 lg:flex-none flex items-center justify-center p-8 md:p-16 bg-white relative lg:rounded-l-[40px] z-10 lg:ml-auto min-h-screen lg:min-h-0">
         <div className="w-full max-w-md">
           {/* Logo / Header for mobile */}
           <div className="flex flex-col items-start mb-10">
@@ -142,10 +188,10 @@ export default function Login() {
             />
 
             <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-2 uppercase">
-              Welcome back
+              {isRegistering ? "Register Admin" : "Welcome back"}
             </h1>
             <p className="text-slate-500 text-sm font-medium">
-              Please enter your admin details to continue
+              {isRegistering ? "Create your admin credentials below" : "Please enter your admin details to continue"}
             </p>
           </div>
 
@@ -199,14 +245,46 @@ export default function Login() {
               </div>
             </div>
 
+            {isRegistering && (
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                  Role
+                </label>
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:border-[#6340b2] focus:ring-4 focus:ring-[#6340b2]/10 transition-all font-medium appearance-none bg-white"
+                >
+                  <option value="Admin">Admin</option>
+                  <option value="Editor">Editor</option>
+                  <option value="Super Admin">Super Admin</option>
+                </select>
+              </div>
+            )}
+
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full py-3.5 bg-[#6340b2] hover:bg-[#5231a3] text-white font-bold rounded-full text-sm uppercase tracking-wider shadow-md shadow-[#6340b2]/10 hover:shadow-lg transition-all cursor-pointer text-center"
+              disabled={isLoading}
+              className="w-full py-3.5 bg-[#6340b2] hover:bg-[#5231a3] text-white font-bold rounded-full text-sm uppercase tracking-wider shadow-md shadow-[#6340b2]/10 hover:shadow-lg transition-all cursor-pointer text-center disabled:opacity-70"
             >
-              Sign in
+              {isLoading ? "Processing..." : (isRegistering ? "Create Account" : "Sign in")}
             </button>
           </form>
+
+          {/* Toggle Register/Login */}
+          <div className="mt-8 text-center">
+            <p className="text-sm font-medium text-slate-500">
+              {isRegistering ? "Already have an account?" : "Don't have an account?"}{" "}
+              <button
+                type="button"
+                onClick={() => setIsRegistering(!isRegistering)}
+                className="text-[#6340b2] hover:text-[#5231a3] font-bold hover:underline transition-all cursor-pointer"
+              >
+                {isRegistering ? "Sign in" : "Register here"}
+              </button>
+            </p>
+          </div>
 
         </div>
       </div>

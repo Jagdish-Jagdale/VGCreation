@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import logo from "../assets/vision_glass_creation_logo.png";
 import symbol from "../assets/vision_glass_creation_symbol.png";
+import { secondaryAuth, db } from "../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 // Default Fallbacks
 const defaultAbout = {
@@ -53,6 +56,7 @@ const defaultEnquiries = [
 
 export default function AdminPanel() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
   const [homeData, setHomeData] = useState(defaultHome);
   const [image1Mode, setImage1Mode] = useState("link");
@@ -523,9 +527,14 @@ export default function AdminPanel() {
     localStorage.removeItem("isAdmin");
     triggerToast("Logged out successfully! Redirecting...");
     setTimeout(() => {
-      window.history.pushState(null, "", "/login");
+      window.history.pushState(null, "", "/admin/login");
       window.dispatchEvent(new PopStateEvent("popstate"));
     }, 1200);
+  };
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+    setIsMobileMenuOpen(false);
   };
 
   return (
@@ -537,11 +546,18 @@ export default function AdminPanel() {
           }`}>
           <span>{toast.message}</span>
         </div>
-      )}      {/* Left Sidebar */}
-      <aside className={`fixed top-6 bottom-6 left-6 ${isSidebarCollapsed ? "w-[76px]" : "w-[240px]"} bg-white rounded-[20px] shadow-sm border border-slate-100/80 p-4 flex flex-col justify-between z-20 transition-all duration-300`}>
+      )}
+      
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setIsMobileMenuOpen(false)}></div>
+      )}
+
+      {/* Left Sidebar */}
+      <aside className={`fixed top-0 bottom-0 left-0 ${isSidebarCollapsed ? "md:w-[76px]" : "md:w-[240px]"} w-[260px] bg-white md:rounded-[20px] shadow-2xl md:shadow-sm border border-slate-100/80 p-4 flex flex-col justify-between z-50 transition-transform duration-300 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:top-6 md:bottom-6 md:left-6`}>
         <div>
           {/* Top Control Header & Sidebar Icon */}
-          <div className={`flex items-center mb-6 px-1 ${isSidebarCollapsed ? "justify-center" : "justify-end"}`}>
+          <div className={`hidden md:flex items-center mb-6 px-1 ${isSidebarCollapsed ? "justify-center" : "justify-end"}`}>
             <button
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
               className="text-slate-400 hover:text-[#6340b2] transition-colors cursor-pointer"
@@ -550,6 +566,13 @@ export default function AdminPanel() {
                 <rect x="3" y="3" width="18" height="18" rx="2" />
                 <line x1="9" y1="3" x2="9" y2="21" />
               </svg>
+            </button>
+          </div>
+
+          {/* Mobile Close Button */}
+          <div className="md:hidden flex justify-end mb-2">
+            <button onClick={() => setIsMobileMenuOpen(false)} className="text-slate-400 p-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
 
@@ -569,7 +592,7 @@ export default function AdminPanel() {
           {/* Navigation Links */}
           <nav className="space-y-1">
             <button
-              onClick={() => setActiveTab("home")}
+              onClick={() => handleTabClick("home")}
               className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center px-2" : "gap-2.5 px-3"} py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "home"
                 ? "text-[#6340b2] bg-violet-100/90 font-bold"
                 : "text-slate-500 hover:bg-slate-50/70 hover:text-slate-800 font-medium"
@@ -585,7 +608,7 @@ export default function AdminPanel() {
             </button>
 
             <button
-              onClick={() => setActiveTab("about")}
+              onClick={() => handleTabClick("about")}
               className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center px-2" : "gap-2.5 px-3"} py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "about"
                 ? "text-[#6340b2] bg-violet-100/90 font-bold"
                 : "text-slate-500 hover:bg-slate-50/70 hover:text-slate-800 font-medium"
@@ -601,7 +624,7 @@ export default function AdminPanel() {
             </button>
 
             <button
-              onClick={() => setActiveTab("services")}
+              onClick={() => handleTabClick("services")}
               className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center px-2" : "gap-2.5 px-3"} py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "services"
                 ? "text-[#6340b2] bg-violet-100/90 font-bold"
                 : "text-slate-500 hover:bg-slate-50/70 hover:text-slate-800 font-medium"
@@ -617,7 +640,7 @@ export default function AdminPanel() {
             </button>
 
             <button
-              onClick={() => setActiveTab("gallery")}
+              onClick={() => handleTabClick("gallery")}
               className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center px-2" : "gap-2.5 px-3"} py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "gallery"
                 ? "text-[#6340b2] bg-violet-100/90 font-bold"
                 : "text-slate-500 hover:bg-slate-50/70 hover:text-slate-800 font-medium"
@@ -633,7 +656,7 @@ export default function AdminPanel() {
             </button>
 
             <button
-              onClick={() => setActiveTab("contact")}
+              onClick={() => handleTabClick("contact")}
               className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center px-2" : "gap-2.5 px-3"} py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "contact"
                 ? "text-[#6340b2] bg-violet-100/90 font-bold"
                 : "text-slate-500 hover:bg-slate-50/70 hover:text-slate-800 font-medium"
@@ -649,7 +672,7 @@ export default function AdminPanel() {
             </button>
 
             <button
-              onClick={() => setActiveTab("enquiries")}
+              onClick={() => handleTabClick("enquiries")}
               className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center px-2" : "gap-2.5 px-3"} py-2.5 rounded-lg text-[13px] tracking-wide relative transition-all ${activeTab === "enquiries"
                 ? "text-[#6340b2] bg-violet-100/90 font-bold"
                 : "text-slate-500 hover:bg-slate-50/70 hover:text-slate-800 font-medium"
@@ -668,6 +691,7 @@ export default function AdminPanel() {
                 </span>
               )}
             </button>
+
           </nav>
         </div>
 
@@ -687,9 +711,20 @@ export default function AdminPanel() {
       </aside>
 
       {/* Right Side Workspace Area */}
-      <main className={`flex-grow ${isSidebarCollapsed ? "pl-[112px]" : "pl-[258px]"} min-h-screen flex flex-col transition-all duration-300`}>
+      <main className={`flex-grow w-full ${isSidebarCollapsed ? "md:pl-[112px]" : "md:pl-[258px]"} min-h-screen flex flex-col transition-all duration-300`}>
+        
+        {/* Mobile Header */}
+        <div className="md:hidden flex items-center justify-between p-4 bg-white shadow-sm sticky top-0 z-30">
+          <img src={logo} alt="Logo" className="h-8 object-contain" />
+          <button onClick={() => setIsMobileMenuOpen(true)} className="text-slate-600 focus:outline-none p-2">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+
         {/* Content Body */}
-        <div className="p-8 pt-12 flex-grow">
+        <div className="p-4 sm:p-6 md:p-8 md:pt-12 flex-grow overflow-x-hidden">
 
           {/* TAB: HOME PAGE */}
           {activeTab === "home" && (
@@ -1259,7 +1294,7 @@ export default function AdminPanel() {
               </div>
 
               {/* Services Table List */}
-              <div className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden">
+              <div className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-x-auto">
                 <table className="w-full text-left text-sm text-slate-500">
                   <thead className="text-xs text-slate-700 uppercase bg-slate-50 font-bold border-b border-violet-100">
                     <tr>
@@ -1347,7 +1382,7 @@ export default function AdminPanel() {
                         />
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Category Badge</label>
                           <select
@@ -1445,7 +1480,7 @@ export default function AdminPanel() {
               </div>
 
               {/* Gallery List Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
                 {gallery.map((item) => (
                   <div key={item.id} className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden flex flex-col justify-between group relative">
                     <div className="relative h-40 overflow-hidden">
@@ -1514,7 +1549,7 @@ export default function AdminPanel() {
                         />
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Category Badge</label>
                           <select
