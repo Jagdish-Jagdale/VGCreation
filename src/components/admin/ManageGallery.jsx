@@ -1,45 +1,152 @@
 import { useState, useEffect } from "react";
+import { db, storage } from "../../firebase";
+import { collection, doc, getDocs, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import DeleteConfirmModal from "./DeleteConfirmModal";
 
 export default function ManageGallery({ triggerToast }) {
   const [gallery, setGallery] = useState([]);
-  const [galleryModal, setGalleryModal] = useState({ show: false, data: null });
-  const [galleryForm, setGalleryForm] = useState({ title: "", category: "", image: "", isTall: false });
+  const [servicesList, setServicesList] = useState([]);
+  const [galleryModal, setGalleryModal] = useState({ show: false });
+  const [galleryForm, setGalleryForm] = useState({ title: "", serviceId: "", image: "", isTall: false });
+  const [imageMode, setImageMode] = useState("link");
+  const [imageFile, setImageFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [deleteModal, setDeleteModal] = useState({ show: false, id: null, itemName: "", serviceId: "" });
 
   useEffect(() => {
-    const savedGallery = localStorage.getItem("vg_gallery");
-    if (savedGallery) {
-      setGallery(JSON.parse(savedGallery));
-    }
+    fetchServices();
+    fetchGallery();
   }, []);
+
+  const fetchServices = async () => {
+    try {
+      const snap = await getDocs(collection(db, "services"));
+      const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setServicesList(list);
+    } catch (e) {
+      console.error(e);
+      triggerToast("Failed to fetch services", "error");
+    }
+  };
+
+  const fetchGallery = async () => {
+    try {
+      const snap = await getDocs(collection(db, "gallery"));
+      let allImages = [];
+      snap.docs.forEach(docSnap => {
+        const data = docSnap.data();
+        const serviceId = docSnap.id;
+        const serviceName = data.serviceName || "Unknown";
+        if (data.images && Array.isArray(data.images)) {
+          data.images.forEach(img => {
+            allImages.push({ ...img, serviceId, serviceName });
+          });
+        }
+      });
+      // Sort by newest first
+      allImages.sort((a, b) => b.id - a.id);
+      setGallery(allImages);
+    } catch (e) {
+      console.error(e);
+      triggerToast("Failed to fetch gallery images", "error");
+    }
+  };
 
   const openGalleryModal = () => {
     setGalleryModal({ show: true });
-    setGalleryForm({ title: "", category: "COMMERCIAL", image: "", isTall: false });
+    setGalleryForm({ title: "", serviceId: servicesList.length > 0 ? servicesList[0].id : "", image: "", isTall: false });
+    setImageMode("link");
+    setImageFile(null);
   };
 
-  const handleGallerySubmit = (e) => {
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        triggerToast("Image is too large (max 2MB). Please compress it.", "error");
+        return;
+      }
+      setImageFile(file);
+      setGalleryForm(prev => ({ ...prev, image: URL.createObjectURL(file) }));
+    }
+  };
+
+  const handleGallerySubmit = async (e) => {
     e.preventDefault();
-    const newItem = {
-      id: Date.now(),
-      title: galleryForm.title,
-      category: galleryForm.category,
-      image: galleryForm.image || "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
-      isTall: galleryForm.isTall
-    };
+    if (!galleryForm.serviceId) {
+      triggerToast("Please select a service", "error");
+      return;
+    }
+    if (imageMode === "upload" && !imageFile && !galleryForm.image) {
+      triggerToast("Please upload an image", "error");
+      return;
+    }
+    if (imageMode === "link" && !galleryForm.image) {
+      triggerToast("Please enter an image URL", "error");
+      return;
+    }
 
-    const updated = [newItem, ...gallery];
-    setGallery(updated);
-    localStorage.setItem("vg_gallery", JSON.stringify(updated));
-    setGalleryModal({ show: false });
-    triggerToast("Gallery image added!");
+    setIsLoading(true);
+    try {
+      let finalImageUrl = galleryForm.image;
+
+      if (imageMode === "upload" && imageFile) {
+        const fileExt = imageFile.name.split('.').pop();
+        const fileName = `gallery/gallery_${Date.now()}.${fileExt}`;
+        const storageRef = ref(storage, fileName);
+        
+        await uploadBytes(storageRef, imageFile);
+        finalImageUrl = await getDownloadURL(storageRef);
+      }
+
+      const newImage = {
+        id: Date.now().toString(),
+        title: galleryForm.title,
+        image: finalImageUrl,
+        isTall: galleryForm.isTall
+      };
+
+      const serviceDoc = doc(db, "gallery", galleryForm.serviceId);
+      const selectedService = servicesList.find(s => s.id === galleryForm.serviceId);
+      const serviceName = selectedService ? (selectedService.name || selectedService.title) : "Unknown";
+
+      const docSnap = await getDoc(serviceDoc);
+      if (docSnap.exists()) {
+        const currentImages = docSnap.data().images || [];
+        await updateDoc(serviceDoc, { images: [newImage, ...currentImages] });
+      } else {
+        await setDoc(serviceDoc, { serviceId: galleryForm.serviceId, serviceName, images: [newImage] });
+      }
+
+      triggerToast("Gallery image added!");
+      setGalleryModal({ show: false });
+      fetchGallery();
+    } catch (e) {
+      console.error(e);
+      triggerToast("Failed to save gallery image", "error");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDeleteGallery = (id) => {
-    if (window.confirm("Are you sure you want to delete this gallery item?")) {
-      const updated = gallery.filter((item) => item.id !== id);
-      setGallery(updated);
-      localStorage.setItem("vg_gallery", JSON.stringify(updated));
-      triggerToast("Gallery item removed!", "error");
+  const confirmDeleteGallery = async () => {
+    if (!deleteModal.id || !deleteModal.serviceId) return;
+    try {
+      const serviceDoc = doc(db, "gallery", deleteModal.serviceId);
+      const docSnap = await getDoc(serviceDoc);
+      if (docSnap.exists()) {
+        const currentImages = docSnap.data().images || [];
+        const updatedImages = currentImages.filter(img => img.id !== deleteModal.id);
+        await updateDoc(serviceDoc, { images: updatedImages });
+        triggerToast("Gallery item removed!", "error");
+        fetchGallery();
+      }
+    } catch (e) {
+      console.error(e);
+      triggerToast("Failed to delete gallery image", "error");
+    } finally {
+      setDeleteModal({ show: false, id: null, itemName: "", serviceId: "" });
     }
   };
 
@@ -53,7 +160,8 @@ export default function ManageGallery({ triggerToast }) {
         </div>
         <button
           onClick={openGalleryModal}
-          className="bg-[#6340b2] hover:bg-[#5231a3] text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-md shadow-violet-500/10 cursor-pointer"
+          disabled={isLoading}
+          className="bg-[#6340b2] hover:bg-[#5231a3] text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-md shadow-violet-500/10 cursor-pointer disabled:opacity-50"
         >
           <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -73,7 +181,7 @@ export default function ManageGallery({ triggerToast }) {
                 className="w-full h-full object-cover"
               />
               <button
-                onClick={() => handleDeleteGallery(item.id)}
+                onClick={() => setDeleteModal({ show: true, id: item.id, itemName: item.title, serviceId: item.serviceId })}
                 className="absolute top-2.5 right-2.5 bg-white/95 hover:bg-red-50 text-red-600 hover:text-red-700 p-1.5 rounded-lg shadow transition-colors cursor-pointer"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -82,14 +190,16 @@ export default function ManageGallery({ triggerToast }) {
               </button>
             </div>
             <div className="p-3">
-              <span className="text-[10px] font-bold text-violet-600 uppercase block tracking-wider mb-1">{item.category}</span>
+              <span className="text-[10px] font-bold text-violet-600 uppercase block tracking-wider mb-1 line-clamp-1" title={item.serviceName}>{item.serviceName}</span>
               <h4 className="text-slate-800 text-xs font-bold leading-tight line-clamp-1">{item.title}</h4>
-              <span className="text-[9px] text-slate-400 font-bold block mt-1 uppercase tracking-wide">
-                {item.isTall ? "Vertical Layout" : "Horizontal Layout"}
-              </span>
             </div>
           </div>
         ))}
+        {gallery.length === 0 && (
+          <div className="col-span-full py-12 text-center text-slate-400 text-sm font-medium">
+            No gallery images found.
+          </div>
+        )}
       </div>
 
       {/* Gallery Image Add Modal */}
@@ -98,7 +208,8 @@ export default function ManageGallery({ triggerToast }) {
           <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
             <button
               onClick={() => setGalleryModal({ show: false })}
-              className="absolute top-6 right-6 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+              className="absolute top-6 right-6 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer disabled:opacity-50"
+              disabled={isLoading}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -107,7 +218,7 @@ export default function ManageGallery({ triggerToast }) {
 
             <h3 className="text-xl font-extrabold text-slate-900 mb-6 uppercase tracking-tight">Add Portfolio Photo</h3>
 
-            <form onSubmit={handleGallerySubmit} className="space-y-4">
+            <form onSubmit={handleGallerySubmit} className="space-y-5">
               <div>
                 <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Image Title</label>
                 <input
@@ -121,64 +232,104 @@ export default function ManageGallery({ triggerToast }) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Image URL / Path</label>
-                <input
-                  type="text"
-                  value={galleryForm.image}
-                  onChange={(e) => setGalleryForm({ ...galleryForm, image: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#6340b2]"
-                  placeholder="e.g. src/assets/gallery3.jpeg"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Category Badge</label>
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Select Service</label>
+                {servicesList.length === 0 ? (
+                  <p className="text-sm text-red-500 font-medium">Please add a service first.</p>
+                ) : (
                   <select
-                    value={galleryForm.category}
-                    onChange={(e) => setGalleryForm({ ...galleryForm, category: e.target.value })}
+                    value={galleryForm.serviceId}
+                    onChange={(e) => setGalleryForm({ ...galleryForm, serviceId: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#6340b2]"
                     required
                   >
-                    <option value="COMMERCIAL">COMMERCIAL</option>
-                    <option value="RESIDENTIAL">RESIDENTIAL</option>
-                    <option value="INDUSTRIAL">INDUSTRIAL</option>
+                    <option value="" disabled>Select a service...</option>
+                    {servicesList.map(s => (
+                      <option key={s.id} value={s.id}>{s.name || s.title}</option>
+                    ))}
                   </select>
-                </div>
-
-                <div className="flex flex-col justify-end pb-1.5">
-                  <label className="inline-flex items-center gap-2 cursor-pointer mt-auto">
-                    <input
-                      type="checkbox"
-                      checked={galleryForm.isTall}
-                      onChange={(e) => setGalleryForm({ ...galleryForm, isTall: e.target.checked })}
-                      className="w-4.5 h-4.5 accent-[#6340b2] rounded focus:ring-violet-500/10 cursor-pointer"
-                    />
-                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wide">Vertical aspect?</span>
-                  </label>
-                </div>
+                )}
               </div>
 
-              <div className="flex gap-3 justify-end pt-4">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">Image Source</label>
+                  <div className="flex gap-1.5 bg-slate-100 p-0.5 rounded-lg">
+                    <button
+                      type="button"
+                      onClick={() => setImageMode("link")}
+                      className={`px-2 py-1 rounded-md text-[10px] font-bold transition-all cursor-pointer ${imageMode === "link" ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+                    >
+                      Link URL
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageMode("upload")}
+                      className={`px-2 py-1 rounded-md text-[10px] font-bold transition-all cursor-pointer ${imageMode === "upload" ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+                    >
+                      Upload File
+                    </button>
+                  </div>
+                </div>
+
+                {imageMode === "link" ? (
+                  <input
+                    type="text"
+                    value={galleryForm.image}
+                    onChange={(e) => setGalleryForm({ ...galleryForm, image: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#6340b2]"
+                    placeholder="https://images.unsplash.com/..."
+                    required={imageMode === "link"}
+                  />
+                ) : (
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="w-full text-sm bg-white p-1.5 rounded-xl border border-slate-200 cursor-pointer file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#6340b2] file:text-white hover:file:bg-[#5231a3] transition-all"
+                    required={imageMode === "upload" && !galleryForm.image}
+                  />
+                )}
+                {imageMode === "upload" && galleryForm.image && galleryForm.image.startsWith("blob:") && (
+                  <div className="mt-3 relative w-full h-32 rounded-xl overflow-hidden border border-slate-200 bg-slate-50">
+                    <img src={galleryForm.image} alt="Preview" className="w-full h-full object-cover" />
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3 justify-end pt-4 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setGalleryModal({ show: false })}
-                  className="px-5 py-2.5 border border-slate-200 text-slate-500 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-slate-50 cursor-pointer"
+                  disabled={isLoading}
+                  className="px-5 py-2.5 border border-slate-200 text-slate-500 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-slate-50 cursor-pointer disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-[#6340b2] hover:bg-[#5231a3] text-white rounded-xl font-bold text-xs uppercase tracking-wider cursor-pointer"
+                  disabled={isLoading || servicesList.length === 0}
+                  className="px-5 py-2.5 bg-[#6340b2] hover:bg-[#5231a3] text-white rounded-xl font-bold text-xs uppercase tracking-wider cursor-pointer shadow-md shadow-violet-500/20 disabled:opacity-70 flex items-center justify-center min-w-[120px]"
                 >
-                  Add Photo
+                  {isLoading && (
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  )}
+                  {isLoading ? "Saving..." : "Add Photo"}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+
+      <DeleteConfirmModal
+        isOpen={deleteModal.show}
+        onClose={() => setDeleteModal({ show: false, id: null, itemName: "", serviceId: "" })}
+        onConfirm={confirmDeleteGallery}
+        itemName={deleteModal.itemName}
+      />
     </div>
   );
 }

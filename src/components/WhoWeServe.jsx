@@ -1,79 +1,35 @@
 import { useState, useEffect } from "react";
-import architectsImg from "../assets/architects.png";
-import buildersImg from "../assets/builders.png";
-import commercialImg from "../assets/commercial.png";
-import interiorsImg from "../assets/Complete Glass Interior Solutions.jpeg";
-import gymImg from "../assets/gallery11.jpeg";
-import hospitalImg from "../assets/gallery12.jpeg";
-import schoolImg from "../assets/gallery13.jpeg";
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function WhoWeServe() {
   const [meta, setMeta] = useState({
     title: "Trusted by Industry Leaders",
     description: "From architects to industrialists — they all rely on Vision Glass."
   });
-  const [dynamicClients, setDynamicClients] = useState(null);
+  const [displayClients, setDisplayClients] = useState([]);
 
   useEffect(() => {
-    const savedMeta = localStorage.getItem("vg_majorclients_meta");
-    if (savedMeta) {
-      setMeta(JSON.parse(savedMeta));
-    }
-    const savedClients = localStorage.getItem("vg_majorclients_list");
-    if (savedClients) {
-      const parsed = JSON.parse(savedClients);
-      if (parsed.length > 0) {
-        setDynamicClients(parsed);
+    const fetchData = async () => {
+      try {
+        const docRef = doc(db, "home", "majorclients");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.meta) setMeta(data.meta);
+          if (data.list) setDisplayClients(data.list);
+        } else {
+          // If no firestore document exists, show empty list to prevent default dummy data
+          setDisplayClients([]);
+        }
+      } catch (error) {
+        console.error("Error fetching WhoWeServe data:", error);
       }
-    }
+    };
+    fetchData();
   }, []);
 
-  const clients = [
-    {
-      id: 1,
-      title: "Architects",
-      subtitle: "Leading firms across Pune",
-      image: architectsImg,
-    },
-    {
-      id: 2,
-      title: "Interiors",
-      subtitle: "Premium interior designers",
-      image: interiorsImg,
-    },
-    {
-      id: 3,
-      title: "Industrial Companies",
-      subtitle: "Large scale manufacturing plants",
-      image: commercialImg,
-    },
-    {
-      id: 4,
-      title: "Builders",
-      subtitle: "Residential & commercial developers",
-      image: buildersImg,
-    },
-    {
-      id: 5,
-      title: "Gyms",
-      subtitle: "Fitness centers and studios",
-      image: gymImg,
-    },
-    {
-      id: 6,
-      title: "Hospitals",
-      subtitle: "Healthcare facilities",
-      image: hospitalImg,
-    },
-    {
-      id: 7,
-      title: "Schools",
-      subtitle: "Educational institutions",
-      image: schoolImg,
-    },
-  ];
-
-  const displayClients = dynamicClients || clients;
+  if (displayClients.length === 0) return null;
 
   return (
     <section id="whoweserve" className="py-16 bg-white text-slate-800 border-b border-slate-100">

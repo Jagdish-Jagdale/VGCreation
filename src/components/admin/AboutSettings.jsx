@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { db } from "../../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import DeleteConfirmModal from "./DeleteConfirmModal";
 
 export default function AboutSettings({ triggerToast }) {
+  const [isSaving, setIsSaving] = useState(false);
   // 1. Header
   const [headerMeta, setHeaderMeta] = useState({ title: "About Us", subtitle: "Discover our journey and values" });
 
@@ -34,11 +36,7 @@ export default function AboutSettings({ triggerToast }) {
   const [partnerModal, setPartnerModal] = useState({ show: false, mode: "add", data: null });
   const [partnerForm, setPartnerForm] = useState({ name: "" });
 
-  // 6. Sectors
-  const [sectorsMeta, setSectorsMeta] = useState({ title: "Sectors We Serve" });
-  const [sectorsList, setSectorsList] = useState([]);
-  const [sectorModal, setSectorModal] = useState({ show: false, mode: "add", data: null });
-  const [sectorForm, setSectorForm] = useState({ title: "", subtitle: "" });
+  const [deleteModal, setDeleteModal] = useState({ show: false, type: "", id: null, itemName: "" });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,14 +72,6 @@ export default function AboutSettings({ triggerToast }) {
           if (data.meta) setPartnersMeta(data.meta);
           if (data.list) setPartnersList(data.list);
         }
-
-        // Sectors
-        const sectorsDoc = await getDoc(doc(db, "about", "sectors"));
-        if (sectorsDoc.exists()) {
-          const data = sectorsDoc.data();
-          if (data.meta) setSectorsMeta(data.meta);
-          if (data.list) setSectorsList(data.list);
-        }
       } catch (error) {
         console.error("Error fetching about settings:", error);
         triggerToast("Failed to load settings from database", "error");
@@ -92,18 +82,20 @@ export default function AboutSettings({ triggerToast }) {
 
   const handleAboutSave = async (e) => {
     if (e) e.preventDefault();
+    setIsSaving(true);
     try {
       await setDoc(doc(db, "about", "mainheader"), headerMeta);
       await setDoc(doc(db, "about", "aboutoverview"), overviewData);
       await setDoc(doc(db, "about", "whyus"), { meta: whyUsMeta, cards: whyUsCards });
       await setDoc(doc(db, "about", "pointsandsubpoints"), { meta: pointsMeta, list: pointsList });
       await setDoc(doc(db, "about", "partners"), { meta: partnersMeta, list: partnersList });
-      await setDoc(doc(db, "about", "sectors"), { meta: sectorsMeta, list: sectorsList });
 
       triggerToast("All About Page settings saved to database successfully!");
     } catch (error) {
       console.error("Error saving to database:", error);
       triggerToast("Failed to save settings to database.", "error");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -128,12 +120,19 @@ export default function AboutSettings({ triggerToast }) {
     // but the caller will handle resetting via openModal.
   };
 
-  const handleGenericDelete = (id, listState, setListState) => {
-    if (window.confirm("Are you sure you want to delete this item?")) {
-      const updated = listState.filter((item) => item.id !== id);
-      setListState(updated);
-      triggerToast("Item deleted!", "error");
+  const confirmDelete = () => {
+    const { type, id } = deleteModal;
+    if (!id) return;
+    
+    if (type === "whyUsCards") {
+      setWhyUsCards(prev => prev.filter(item => item.id !== id));
+    } else if (type === "pointsList") {
+      setPointsList(prev => prev.filter(item => item.id !== id));
+    } else if (type === "partnersList") {
+      setPartnersList(prev => prev.filter(item => item.id !== id));
     }
+    triggerToast("Item deleted!", "error");
+    setDeleteModal({ show: false, type: "", id: null, itemName: "" });
   };
 
   // Why Us
@@ -157,12 +156,6 @@ export default function AboutSettings({ triggerToast }) {
   const openPartnerModal = (mode, data = null) => {
     setPartnerModal({ show: true, mode, data });
     setPartnerForm(mode === "edit" ? { name: data.name } : { name: "" });
-  };
-
-  // Sectors
-  const openSectorModal = (mode, data = null) => {
-    setSectorModal({ show: true, mode, data });
-    setSectorForm(mode === "edit" ? { title: data.title, subtitle: data.subtitle } : { title: "", subtitle: "" });
   };
 
   const handleOverviewImageUpload = (e) => {
@@ -189,8 +182,20 @@ export default function AboutSettings({ triggerToast }) {
           <h2 className="text-xl font-extrabold text-slate-800 tracking-tight">About Page Settings</h2>
           <p className="text-sm text-slate-400 font-medium mt-1">Configure all sections of the About Page here.</p>
         </div>
-        <button onClick={handleAboutSave} className="bg-[#6340b2] hover:bg-[#5231a3] text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-violet-500/10 cursor-pointer">
-          Save All Settings
+        <button 
+          onClick={handleAboutSave} 
+          disabled={isSaving}
+          className="bg-[#6340b2] hover:bg-[#5231a3] text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-violet-500/10 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+        >
+          {isSaving ? (
+            <>
+              <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Saving...
+            </>
+          ) : "Save All Settings"}
         </button>
       </div>
 
@@ -278,7 +283,7 @@ export default function AboutSettings({ triggerToast }) {
                     <div className="flex gap-2 text-xs font-bold">
                       <button type="button" onClick={() => openWhyUsModal("edit", c)} className="text-[#6340b2] cursor-pointer">Edit</button>
                       <span className="text-slate-300">|</span>
-                      <button type="button" onClick={() => handleGenericDelete(c.id, whyUsCards, setWhyUsCards)} className="text-red-600 cursor-pointer">Delete</button>
+                      <button type="button" onClick={() => setDeleteModal({ show: true, type: "whyUsCards", id: c.id, itemName: c.title || "Card" })} className="text-red-600 cursor-pointer">Delete</button>
                     </div>
                   </div>
                   <h5 className="text-sm font-bold text-slate-800 mb-1">{c.title}</h5>
@@ -316,7 +321,7 @@ export default function AboutSettings({ triggerToast }) {
                   <div className="flex gap-2 text-xs font-bold">
                     <button type="button" onClick={() => openPointModal("edit", p)} className="text-[#6340b2] cursor-pointer">Edit</button>
                     <span className="text-slate-300">|</span>
-                    <button type="button" onClick={() => handleGenericDelete(p.id, pointsList, setPointsList)} className="text-red-600 cursor-pointer">Delete</button>
+                    <button type="button" onClick={() => setDeleteModal({ show: true, type: "pointsList", id: p.id, itemName: p.title || "Point" })} className="text-red-600 cursor-pointer">Delete</button>
                   </div>
                 </div>
                 <div className="text-xs text-slate-500">
@@ -358,43 +363,7 @@ export default function AboutSettings({ triggerToast }) {
                 <span className="text-sm font-bold text-slate-700">{p.name}</span>
                 <div className="flex gap-2">
                   <button type="button" onClick={() => openPartnerModal("edit", p)} className="text-[#6340b2] cursor-pointer hover:underline text-xs">Edit</button>
-                  <button type="button" onClick={() => handleGenericDelete(p.id, partnersList, setPartnersList)} className="text-red-600 cursor-pointer hover:underline text-xs">Delete</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* 6. Sectors Settings */}
-      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-violet-100/60 shadow-sm p-6 mb-6">
-        <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
-          <div>
-            <h3 className="text-lg font-bold text-slate-800">Sectors Settings</h3>
-          </div>
-          <button type="button" onClick={() => openSectorModal("add")} className="inline-flex items-center gap-1 bg-violet-50 text-[#6340b2] px-3.5 py-2 rounded-xl font-bold text-xs uppercase cursor-pointer border border-violet-100">
-            Add Sector
-          </button>
-        </div>
-        <div className="mb-6">
-          <label className="block text-xs font-bold text-slate-600 uppercase mb-2">Section Title</label>
-          <input type="text" value={sectorsMeta.title} onChange={(e) => setSectorsMeta({ ...sectorsMeta, title: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2]" required />
-        </div>
-        <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-3">Current Sectors</h4>
-        {sectorsList.length === 0 ? (
-          <p className="text-xs text-slate-400 font-medium py-3">No sectors added yet.</p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {sectorsList.map((s, index) => (
-              <div key={s.id || index} className="p-4 bg-slate-50/40 rounded-xl border border-slate-100/50 flex flex-col justify-between">
-                <div>
-                  <div className="flex justify-end gap-2 text-xs font-bold mb-2">
-                    <button type="button" onClick={() => openSectorModal("edit", s)} className="text-[#6340b2] cursor-pointer">Edit</button>
-                    <span className="text-slate-300">|</span>
-                    <button type="button" onClick={() => handleGenericDelete(s.id, sectorsList, setSectorsList)} className="text-red-600 cursor-pointer">Delete</button>
-                  </div>
-                  <h5 className="text-sm font-bold text-slate-800 mb-1">{s.title}</h5>
-                  <p className="text-xs text-slate-500">{s.subtitle}</p>
+                  <button type="button" onClick={() => setDeleteModal({ show: true, type: "partnersList", id: p.id, itemName: p.name || "Partner" })} className="text-red-600 cursor-pointer hover:underline text-xs">Delete</button>
                 </div>
               </div>
             ))}
@@ -498,32 +467,12 @@ export default function AboutSettings({ triggerToast }) {
         </div>
       )}
 
-      {/* Sector Modal */}
-      {sectorModal.show && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
-            <button onClick={() => setSectorModal({ show: false, mode: "add", data: null })} className="absolute top-6 right-6 text-slate-400 cursor-pointer">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
-            <h3 className="text-xl font-extrabold text-slate-900 mb-6 uppercase tracking-tight">{sectorModal.mode === "add" ? "Add Sector" : "Edit Sector"}</h3>
-            <form onSubmit={(e) => handleGenericSubmit(e, sectorModal, setSectorModal, sectorsList, setSectorsList, sectorForm, setSectorForm)} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-2">Sector Title</label>
-                <input type="text" value={sectorForm.title} onChange={(e) => setSectorForm({ ...sectorForm, title: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2]" required />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-2">Sector Subtitle</label>
-                <input type="text" value={sectorForm.subtitle} onChange={(e) => setSectorForm({ ...sectorForm, subtitle: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2]" required />
-              </div>
-              <div className="flex gap-3 justify-end pt-4">
-                <button type="button" onClick={() => setSectorModal({ show: false, mode: "add", data: null })} className="px-5 py-2.5 border border-slate-200 text-slate-500 rounded-xl font-bold text-xs uppercase cursor-pointer">Cancel</button>
-                <button type="submit" className="px-5 py-2.5 bg-[#6340b2] text-white rounded-xl font-bold text-xs uppercase cursor-pointer">{sectorModal.mode === "add" ? "Add Sector" : "Save Changes"}</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
+      <DeleteConfirmModal
+        isOpen={deleteModal.show}
+        onClose={() => setDeleteModal({ show: false, type: "", id: null, itemName: "" })}
+        onConfirm={confirmDelete}
+        itemName={deleteModal.itemName}
+      />
     </div>
   );
 }

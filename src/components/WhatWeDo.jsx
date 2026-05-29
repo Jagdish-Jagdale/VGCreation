@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { db } from "../firebase";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import windowsImg from "../assets/Aluminium & UPVC Windows.jpg";
 import mirrorsImg from "../assets/Decorative & LED Mirrors.jpg";
 import facadeImg from "../assets/Structural & Semi-Structural Facade Work.jpg";
@@ -71,17 +73,34 @@ export default function WhatWeDo() {
   });
 
   useEffect(() => {
-    const saved = localStorage.getItem("vg_services_v2");
-    if (saved) {
-      setServicesList(JSON.parse(saved));
-    } else {
-      setServicesList(services);
-    }
+    const fetchServices = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "services"));
+        if (!querySnapshot.empty) {
+          const list = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const featuredList = list.filter(s => s.featured === true);
+          setServicesList(featuredList.length > 0 ? featuredList : list.slice(0, 6)); // Fallback to some services if none featured
+        } else {
+          setServicesList([]);
+        }
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      }
+    };
+    fetchServices();
 
-    const savedMeta = localStorage.getItem("vg_whatwedo_meta");
-    if (savedMeta) {
-      setMeta(JSON.parse(savedMeta));
-    }
+    const fetchMeta = async () => {
+      try {
+        const docRef = doc(db, "home", "whatwedo");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setMeta(docSnap.data());
+        }
+      } catch (error) {
+        console.error("Error fetching WhatWeDo meta:", error);
+      }
+    };
+    fetchMeta();
   }, []);
 
   return (
@@ -116,7 +135,7 @@ export default function WhatWeDo() {
               <div className="relative h-70 overflow-hidden flex items-center justify-center">
                 <img
                   src={service.image}
-                  alt={service.title}
+                  alt={service.name || service.title}
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 {/* Dark gradient overlay */}
@@ -127,7 +146,7 @@ export default function WhatWeDo() {
                 {/* Title overlay at bottom */}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-4 py-4 z-10">
                   <h3 className="text-white font-bold text-sm leading-snug uppercase tracking-wide">
-                    {service.title}
+                    {service.name || service.title}
                   </h3>
                 </div>
               </div>

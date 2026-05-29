@@ -43,7 +43,7 @@ export default function AdminPanel() {
     <div className="flex min-h-screen bg-slate-50 font-sans selection:bg-violet-200">
       
       {/* Toast Notification */}
-      <div className={`fixed top-6 right-6 z-[100] transition-all duration-300 transform ${toast.show ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0 pointer-events-none"}`}>
+      <div className={`fixed top-6 right-6 z-[9999] transition-all duration-300 transform ${toast.show ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0 pointer-events-none"}`}>
         <div className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-xl border ${toast.type === "error" ? "bg-red-50 text-red-700 border-red-200" : "bg-white text-slate-800 border-slate-200"}`}>
           {toast.type === "error" ? (
             <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
@@ -117,16 +117,18 @@ export default function AdminPanel() {
           </button>
         </div>
 
-        {/* Content Body */}
-        <div className="p-4 sm:p-6 md:p-8 md:pt-12 flex-grow overflow-x-hidden">
-
-          {activeTab === "home" && <HomeSettings triggerToast={triggerToast} />}
-          {activeTab === "about" && <AboutSettings triggerToast={triggerToast} />}
-          {activeTab === "services" && <ManageServices triggerToast={triggerToast} />}
-          {activeTab === "gallery" && <ManageGallery triggerToast={triggerToast} />}
-          {activeTab === "contact" && <ContactSettings triggerToast={triggerToast} />}
-          {activeTab === "enquiries" && <EnquiriesLog triggerToast={triggerToast} />}
-
+        {/* Main Content Area */}
+        <div className="flex-1 overflow-y-auto bg-slate-50 relative">
+          <main className="p-4 md:p-6 lg:p-10 pb-24 md:pb-10 max-w-7xl mx-auto w-full transition-all duration-300">
+            <div className="bg-white/80 border border-white/40 shadow-xl shadow-slate-200/40 rounded-[2rem] p-6 lg:p-8 min-h-[calc(100vh-5rem)]">
+              {activeTab === "home" && <HomeSettings triggerToast={triggerToast} setActiveTab={setActiveTab} />}
+              {activeTab === "about" && <AboutSettings triggerToast={triggerToast} />}
+              {activeTab === "services" && <ManageServices triggerToast={triggerToast} />}
+              {activeTab === "gallery" && <ManageGallery triggerToast={triggerToast} />}
+              {activeTab === "contact" && <ContactSettings triggerToast={triggerToast} />}
+              {activeTab === "enquiries" && <EnquiriesLog triggerToast={triggerToast} />}
+            </div>
+          </main>
         </div>
       </main>
 

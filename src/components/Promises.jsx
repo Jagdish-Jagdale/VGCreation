@@ -1,27 +1,6 @@
 import { useState, useEffect } from "react";
-
-const defaultPromises = [
-  {
-    id: 1,
-    title: "One-Stop Glass Solution",
-    description: "Complete solutions from concept and design to fabrication and final installation, all under a single roof."
-  },
-  {
-    id: 2,
-    title: "Professional Installation",
-    description: "Our in-house team of certified specialists ensures safe, level, and structural alignment for every project."
-  },
-  {
-    id: 3,
-    title: "Trusted by 50+ Architects",
-    description: "The preferred, reliable creation partner for over 50 leading architects and premium builders in Pune."
-  },
-  {
-    id: 4,
-    title: "Guaranteed Workmanship",
-    description: "Uncompromising standards of durability, premium finishes, and meticulous attention to detail."
-  }
-];
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const promiseIcons = [
   <svg key="1" className="w-5 h-5 text-[#1481b8]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -48,18 +27,25 @@ export default function Promises() {
   });
 
   useEffect(() => {
-    const savedList = localStorage.getItem("vg_promises_list");
-    if (savedList) {
-      setPromisesList(JSON.parse(savedList));
-    } else {
-      setPromisesList(defaultPromises);
-    }
-
-    const savedMeta = localStorage.getItem("vg_promises_meta");
-    if (savedMeta) {
-      setMeta(JSON.parse(savedMeta));
-    }
+    const fetchData = async () => {
+      try {
+        const docRef = doc(db, "home", "ourpromises");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.meta) setMeta(data.meta);
+          if (data.list) setPromisesList(data.list);
+        } else {
+          setPromisesList([]); // Hide if no data is present
+        }
+      } catch (error) {
+        console.error("Error fetching Promises data:", error);
+      }
+    };
+    fetchData();
   }, []);
+
+  if (promisesList.length === 0) return null;
 
   return (
     <section id="promises" className="py-16 bg-[#f8fafc] text-slate-800 border-y border-slate-100">

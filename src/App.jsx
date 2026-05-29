@@ -41,24 +41,7 @@ export default function App() {
   }, [currentPath]);
 
   useEffect(() => {
-    // 1. Title Observer
-    const sections = document.querySelectorAll("section[id], footer[id]");
- 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.id;
-            document.title = SECTION_TITLES[id] || "Vision Glass Creation";
-          }
-        });
-      },
-      { threshold: 0.4 }
-    );
- 
-    sections.forEach((section) => observer.observe(section));
- 
-    // 2. Global Path Interceptor
+    // 1. Global Path Interceptor
     const handleLocationChange = () => {
       setCurrentPath(window.location.pathname);
     };
@@ -79,7 +62,6 @@ export default function App() {
     window.addEventListener("popstate", handleLocationChange);
  
     return () => {
-      observer.disconnect();
       document.removeEventListener("click", handleLinkClick);
       window.removeEventListener("popstate", handleLocationChange);
     };

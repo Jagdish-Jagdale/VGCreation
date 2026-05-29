@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 import hero1 from "../assets/hero1.jpeg";
 import hero2 from "../assets/gallery10.jpeg";
 
@@ -14,23 +16,23 @@ export default function Home() {
   });
 
   useEffect(() => {
-    const saved = localStorage.getItem("vg_home");
-    if (saved) {
+    const fetchHero = async () => {
       try {
-        const parsed = JSON.parse(saved);
-        setHomeData(prev => ({
-          ...prev,
-          ...parsed,
-          ...parsed,
-          heroPrimaryTitle: parsed.heroPrimaryTitle || (parsed.heroTitle ? parsed.heroTitle.split("&")[0].trim() : "Expert in Window"),
-          heroSecondaryTitle: parsed.heroSecondaryTitle || (parsed.heroTitle && parsed.heroTitle.includes("&") ? "& " + parsed.heroTitle.split("&").slice(1).join("&").trim() : "& Glass Solutions"),
-          heroImage1: parsed.heroImage1 || hero1,
-          heroImage2: parsed.heroImage2 === "src/assets/hero2.jpeg" ? hero2 : (parsed.heroImage2 || hero2)
-        }));
-      } catch (e) {
-        console.error("Failed to parse vg_home settings:", e);
+        const docSnap = await getDoc(doc(db, "home", "herosection"));
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setHomeData(prev => ({
+            ...prev,
+            ...data,
+            heroImage1: (data.heroImage1 && !data.heroImage1.includes("src/assets")) ? data.heroImage1 : hero1,
+            heroImage2: (data.heroImage2 && !data.heroImage2.includes("src/assets")) ? data.heroImage2 : hero2
+          }));
+        }
+      } catch (error) {
+        console.error("Failed to fetch home settings from Firebase:", error);
       }
-    }
+    };
+    fetchHero();
   }, []);
 
 

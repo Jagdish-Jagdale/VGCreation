@@ -1,141 +1,46 @@
 import { useState, useEffect } from "react";
-import gallery1 from "../assets/gallery1.jpeg";
-import gallery2 from "../assets/gallery2.jpeg";
-import gallery3 from "../assets/gallery3.jpeg";
-import gallery4 from "../assets/gallery4.jpeg";
-import gallery5 from "../assets/gallery5.jpeg";
-import gallery6 from "../assets/gallery6.jpeg";
-import gallery7 from "../assets/gallery7.jpeg";
-import gallery8 from "../assets/gallery8.jpeg";
-import gallery9 from "../assets/gallery9.jpeg";
-import gallery10 from "../assets/gallery10.jpeg";
-import gallery11 from "../assets/gallery11.jpeg";
-import gallery12 from "../assets/gallery12.jpeg";
-import gallery13 from "../assets/gallery13.jpeg";
-import gallery14 from "../assets/gallery14.jpeg";
-
-const items = [
-  {
-    id: 1,
-    category: "FASAD",
-    title: "Structural Glass Facade",
-    image: gallery1,
-    isTall: true,
-  },
-  {
-    id: 2,
-    category: "HOME",
-    title: "Luxury Glass Railings",
-    image: gallery2,
-    isTall: false,
-  },
-  {
-    id: 3,
-    category: "CORPORATE",
-    title: "Corporate Office Partitions",
-    image: gallery3,
-    isTall: false,
-  },
-  {
-    id: 4,
-    category: "HOME",
-    title: "Modern Shower Enclosure",
-    image: gallery4,
-    isTall: true,
-  },
-  {
-    id: 5,
-    category: "OFFICE",
-    title: "Commercial Entrance Canopy",
-    image: gallery5,
-    isTall: true,
-  },
-  {
-    id: 6,
-    category: "HOME",
-    title: "Frameless Glass Balustrade",
-    image: gallery6,
-    isTall: false,
-  },
-  {
-    id: 7,
-    category: "IT",
-    title: "Industrial Exterior Glazing",
-    image: gallery7,
-    isTall: false,
-  },
-  {
-    id: 8,
-    category: "HOME",
-    title: "Premium LED Mirror",
-    image: gallery8,
-    isTall: true,
-  },
-  {
-    id: 9,
-    category: "FASAD",
-    title: "Spider Glass Facade",
-    image: gallery9,
-    isTall: true,
-  },
-  {
-    id: 10,
-    category: "OFFICE",
-    title: "Acoustic Window Glass",
-    image: gallery10,
-    isTall: false,
-  },
-  {
-    id: 11,
-    category: "CORPORATE",
-    title: "Office Glass Partition Wall",
-    image: gallery11,
-    isTall: false,
-  },
-  {
-    id: 12,
-    category: "OFFICE",
-    title: "Frosted Office Glazing",
-    image: gallery12,
-    isTall: true,
-  },
-  {
-    id: 13,
-    category: "IT",
-    title: "Industrial Glass Skylight",
-    image: gallery13,
-    isTall: false,
-  },
-  {
-    id: 14,
-    category: "HOME",
-    title: "Designer Decorative Mirror",
-    image: gallery14,
-    isTall: true,
-  },
-];
-
-const categories = ["ALL", "HOME", "CORPORATE", "OFFICE", "FASAD", "IT"];
+import { db } from "../firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 export default function Gallery() {
   const [galleryItems, setGalleryItems] = useState([]);
-  const [activeFilter, setActiveFilter] = useState(() => {
-    const params = new URLSearchParams(window.location.search);
-    const filterFromUrl = params.get("filter");
-    return filterFromUrl && categories.includes(filterFromUrl) ? filterFromUrl : "ALL";
-  });
+  const [categories, setCategories] = useState(["ALL"]);
+  const [activeFilter, setActiveFilter] = useState("ALL");
   const [visibleCount, setVisibleCount] = useState(6);
   const [selectedIdx, setSelectedIdx] = useState(null);
 
   useEffect(() => {
     document.title = "Gallery | Vision Glass Creation";
-    const saved = localStorage.getItem("vg_gallery_v2");
-    if (saved) {
-      setGalleryItems(JSON.parse(saved));
-    } else {
-      localStorage.setItem("vg_gallery_v2", JSON.stringify(items));
-      setGalleryItems(items);
-    }
+
+    const fetchGallery = async () => {
+      try {
+        const snap = await getDocs(collection(db, "gallery"));
+        let allImages = [];
+        let cats = new Set();
+        snap.docs.forEach(docSnap => {
+          const data = docSnap.data();
+          const serviceName = data.serviceName || "Unknown";
+          if (data.images && Array.isArray(data.images)) {
+            data.images.forEach(img => {
+              allImages.push({ ...img, serviceName });
+              cats.add(serviceName.toUpperCase());
+            });
+          }
+        });
+        allImages.sort((a, b) => b.id - a.id);
+        setGalleryItems(allImages);
+        setCategories(["ALL", ...Array.from(cats)]);
+        
+        const params = new URLSearchParams(window.location.search);
+        const filterFromUrl = params.get("filter");
+        if (filterFromUrl) {
+           setActiveFilter(filterFromUrl.toUpperCase());
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchGallery();
   }, []);
 
   // Reset page size and close modal when filter changes to avoid bugs
@@ -145,7 +50,7 @@ export default function Gallery() {
   }, [activeFilter]);
 
   const filteredItems = galleryItems.filter(
-    (item) => activeFilter === "ALL" || item.category === activeFilter
+    (item) => activeFilter === "ALL" || (item.serviceName && item.serviceName.toUpperCase() === activeFilter)
   );
 
   // Distribute items across 3 columns to maintain masonry look
@@ -258,8 +163,8 @@ export default function Gallery() {
                     
                     {/* Hover Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
-                      <span className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-1.5">
-                        {item.category}
+                      <span className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-1.5 line-clamp-1" title={item.serviceName}>
+                        {item.serviceName}
                       </span>
                       <h3 className="text-white font-bold text-lg leading-snug">
                         {item.title}
@@ -271,6 +176,12 @@ export default function Gallery() {
             </div>
           ))}
         </div>
+
+        {galleryItems.length === 0 && (
+          <div className="text-center py-20 text-slate-400 font-medium text-lg">
+            No gallery images found.
+          </div>
+        )}
 
         {/* Load More Button */}
         {visibleCount < filteredItems.length && (
@@ -343,12 +254,12 @@ export default function Gallery() {
                 {filteredItems[selectedIdx].title}
               </h2>
               <span className="text-[9px] font-black text-white bg-[#1481b8] px-2.5 py-0.5 rounded-full tracking-wider uppercase">
-                {filteredItems[selectedIdx].category}
+                {filteredItems[selectedIdx].serviceName}
               </span>
             </div>
 
             {/* Dots */}
-            <div className="flex gap-1.5 justify-center mt-3.5">
+            <div className="flex gap-1.5 justify-center mt-3.5 flex-wrap max-w-2xl mx-auto">
               {filteredItems.map((_, dotIdx) => (
                 <button
                   key={dotIdx}

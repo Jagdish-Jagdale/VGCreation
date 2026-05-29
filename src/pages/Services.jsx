@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { db } from "../firebase";
+import { collection, getDocs } from "firebase/firestore";
 import windowsImg from "../assets/Aluminium & UPVC Windows.jpg";
 import mirrorsImg from "../assets/Decorative & LED Mirrors.jpg";
 import facadeImg from "../assets/Structural & Semi-Structural Facade Work.jpg";
@@ -69,13 +71,26 @@ export default function Services() {
 
   useEffect(() => {
     document.title = "Services | Vision Glass Creation";
-    const saved = localStorage.getItem("vg_services_v2");
-    if (saved) {
-      setServicesList(JSON.parse(saved));
-    } else {
-      localStorage.setItem("vg_services_v2", JSON.stringify(services));
-      setServicesList(services);
-    }
+    const fetchServices = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "services"));
+        if (!querySnapshot.empty) {
+          const list = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          setServicesList(list);
+        } else {
+          // Fallback
+          const saved = localStorage.getItem("vg_services_v2");
+          if (saved) {
+            setServicesList(JSON.parse(saved));
+          } else {
+            setServicesList(services);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      }
+    };
+    fetchServices();
   }, []);
 
   const loadMore = () => {
@@ -130,7 +145,7 @@ export default function Services() {
               <div className="relative h-56 overflow-hidden flex items-center justify-center border-b border-slate-100">
                 <img
                   src={service.image}
-                  alt={service.title}
+                  alt={service.name || service.title}
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 {/* Dark gradient overlay */}
@@ -141,7 +156,7 @@ export default function Services() {
               <div className="p-5 flex flex-col flex-grow">
                 {/* Title */}
                 <h3 className="text-slate-800 font-bold text-base leading-snug mb-2.5 group-hover:text-[#1481b8] transition-colors duration-200">
-                  {service.title}
+                  {service.name || service.title}
                 </h3>
                 
                 {/* Description */}
@@ -162,7 +177,7 @@ export default function Services() {
                   </a>
                   
                   <a
-                    href={`/gallery?filter=${service.title.split(' ')[0].toUpperCase()}`}
+                    href={`/gallery?filter=${(service.name || service.title).split(' ')[0].toUpperCase()}`}
                     className="text-[9px] font-bold text-slate-400 tracking-wider flex items-center gap-1 uppercase hover:text-[#1481b8] transition-colors"
                   >
                     <svg className="w-3 h-3 text-[#1481b8] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
