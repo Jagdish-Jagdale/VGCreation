@@ -38,35 +38,7 @@ export default function Navbar({ currentPath }) {
     else if (path === "/") setActiveSection("home");
   }, [currentPath]);
 
-  // Track active section — fires when a section crosses the viewport midpoint
-  useEffect(() => {
-    const sections = document.querySelectorAll("section[id], footer[id]");
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (clickLock.current) return; // ignore observer while user just clicked
-        if (window.location.pathname !== "/") return; // only track scroll sections on home page
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.id;
-            setActiveSection(id);
-            const pathname = id === "home" ? "/" : `/${id}`;
-            if (window.location.pathname !== pathname) {
-              window.history.replaceState(null, "", pathname);
-            }
-          }
-        });
-      },
-      {
-        // section is "active" only when it crosses the middle of the viewport
-        rootMargin: "-50% 0px -50% 0px",
-        threshold: 0,
-      }
-    );
-
-    sections.forEach((s) => observer.observe(s));
-    return () => observer.disconnect();
-  }, []);
 
   // On nav click: set active immediately, lock observer for 800ms (scroll duration)
   const handleNavClick = (link) => {

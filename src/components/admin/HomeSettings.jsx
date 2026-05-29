@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { db } from "../../firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const defaultHome = {
   heroBadge: "Pune's Trusted Glass Experts",
@@ -16,12 +18,21 @@ export default function HomeSettings({ triggerToast }) {
   const [image1Mode, setImage1Mode] = useState("link");
   const [image2Mode, setImage2Mode] = useState("link");
 
-  const [tickerItems, setTickerItems] = useState([]);
-  const [tickerModal, setTickerModal] = useState({ show: false, text: "" });
+
 
   const [whatWeDoMeta, setWhatWeDoMeta] = useState({
     title: "Our Services",
     description: "End-to-end glass solutions, crafted with precision and delivered with care across Pune's skyline."
+  });
+
+  const [majorClientsMeta, setMajorClientsMeta] = useState({
+    title: "Trusted by Industry Leaders",
+    description: "From architects to industrialists — they all rely on Vision Glass."
+  });
+
+  const [referClientMeta, setReferClientMeta] = useState({
+    title: "Refer a Client",
+    subtitle: "Help us grow and get rewarded"
   });
 
   const [services, setServices] = useState([]);
@@ -38,57 +49,120 @@ export default function HomeSettings({ triggerToast }) {
   const [promiseModal, setPromiseModal] = useState({ show: false, mode: "add", data: null });
   const [promiseForm, setPromiseForm] = useState({ title: "", description: "" });
 
+  const [majorClientsList, setMajorClientsList] = useState([]);
+  const [majorClientModal, setMajorClientModal] = useState({ show: false, mode: "add", data: null });
+  const [majorClientForm, setMajorClientForm] = useState({ name: "", description: "", image: "" });
+  const [majorClientImageMode, setMajorClientImageMode] = useState("link");
+
+  const [referClientCards, setReferClientCards] = useState([]);
+  const [referClientModal, setReferClientModal] = useState({ show: false, mode: "add", data: null });
+  const [referClientForm, setReferClientForm] = useState({ title: "", subtitle: "", buttonLabel: "" });
+
   useEffect(() => {
-    // Home
-    const savedHome = localStorage.getItem("vg_home");
-    if (savedHome) {
-      let parsed = JSON.parse(savedHome);
-      if (parsed.heroTitle && !parsed.heroPrimaryTitle) {
-        parsed.heroPrimaryTitle = parsed.heroTitle.split("&")[0].trim();
-        parsed.heroSecondaryTitle = parsed.heroTitle.includes("&") ? "& " + parsed.heroTitle.split("&").slice(1).join("&").trim() : "& Glass Solutions";
+    const fetchData = async () => {
+      try {
+        // Hero Section
+        const heroDoc = await getDoc(doc(db, "home", "herosection"));
+        if (heroDoc.exists()) {
+          setHomeData(heroDoc.data());
+        } else {
+          // Fallback to local storage if firebase is empty initially
+          const savedHome = localStorage.getItem("vg_home");
+          if (savedHome) {
+            let parsed = JSON.parse(savedHome);
+            if (parsed.heroTitle && !parsed.heroPrimaryTitle) {
+              parsed.heroPrimaryTitle = parsed.heroTitle.split("&")[0].trim();
+              parsed.heroSecondaryTitle = parsed.heroTitle.includes("&") ? "& " + parsed.heroTitle.split("&").slice(1).join("&").trim() : "& Glass Solutions";
+            }
+            setHomeData(parsed);
+          } else {
+            setHomeData(defaultHome);
+          }
+        }
+
+        // Services (localStorage only for now based on prompt)
+        const savedServices = localStorage.getItem("vg_services_v2");
+        if (savedServices) {
+          setServices(JSON.parse(savedServices));
+        }
+
+        // What We Do Meta
+        const whatWeDoDoc = await getDoc(doc(db, "home", "whatwedo"));
+        if (whatWeDoDoc.exists()) {
+          setWhatWeDoMeta(whatWeDoDoc.data());
+        } else {
+          const savedWhatWeDoMeta = localStorage.getItem("vg_whatwedo_meta");
+          if (savedWhatWeDoMeta) setWhatWeDoMeta(JSON.parse(savedWhatWeDoMeta));
+        }
+
+        // Promises
+        const promisesDoc = await getDoc(doc(db, "home", "ourpromises"));
+        if (promisesDoc.exists()) {
+          const data = promisesDoc.data();
+          if (data.meta) setPromisesMeta(data.meta);
+          if (data.list) setPromisesList(data.list);
+        } else {
+          const savedPromisesMeta = localStorage.getItem("vg_promises_meta");
+          if (savedPromisesMeta) setPromisesMeta(JSON.parse(savedPromisesMeta));
+          const savedPromisesList = localStorage.getItem("vg_promises_list");
+          if (savedPromisesList) setPromisesList(JSON.parse(savedPromisesList));
+        }
+
+        // Major Clients
+        const majorClientsDoc = await getDoc(doc(db, "home", "majorclients"));
+        if (majorClientsDoc.exists()) {
+          const data = majorClientsDoc.data();
+          if (data.meta) setMajorClientsMeta(data.meta);
+          if (data.list) setMajorClientsList(data.list);
+        } else {
+          const savedMajorClientsMeta = localStorage.getItem("vg_majorclients_meta");
+          if (savedMajorClientsMeta) setMajorClientsMeta(JSON.parse(savedMajorClientsMeta));
+          const savedMajorClientsList = localStorage.getItem("vg_majorclients_list");
+          if (savedMajorClientsList) setMajorClientsList(JSON.parse(savedMajorClientsList));
+        }
+
+        // Refer a Client
+        const referClientDoc = await getDoc(doc(db, "home", "referaclient"));
+        if (referClientDoc.exists()) {
+          const data = referClientDoc.data();
+          if (data.meta) setReferClientMeta(data.meta);
+          if (data.cards) setReferClientCards(data.cards);
+        } else {
+          const savedReferClientMeta = localStorage.getItem("vg_referclient_meta");
+          if (savedReferClientMeta) setReferClientMeta(JSON.parse(savedReferClientMeta));
+          const savedReferClientCards = localStorage.getItem("vg_referclient_cards");
+          if (savedReferClientCards) setReferClientCards(JSON.parse(savedReferClientCards));
+        }
+      } catch (error) {
+        console.error("Error fetching home settings:", error);
+        triggerToast("Failed to load settings from database", "error");
       }
-      setHomeData(parsed);
-    } else {
-      localStorage.setItem("vg_home", JSON.stringify(defaultHome));
-    }
-
-    // Services
-    const savedServices = localStorage.getItem("vg_services");
-    if (savedServices) {
-      setServices(JSON.parse(savedServices));
-    }
-
-    // Ticker items
-    const savedTickerItems = localStorage.getItem("vg_ticker_items");
-    if (savedTickerItems) {
-      setTickerItems(JSON.parse(savedTickerItems));
-    }
-
-    // What We Do Meta
-    const savedWhatWeDoMeta = localStorage.getItem("vg_whatwedo_meta");
-    if (savedWhatWeDoMeta) {
-      setWhatWeDoMeta(JSON.parse(savedWhatWeDoMeta));
-    }
-
-    // Promises Meta
-    const savedPromisesMeta = localStorage.getItem("vg_promises_meta");
-    if (savedPromisesMeta) {
-      setPromisesMeta(JSON.parse(savedPromisesMeta));
-    }
-
-    // Promises List
-    const savedPromisesList = localStorage.getItem("vg_promises_list");
-    if (savedPromisesList) {
-      setPromisesList(JSON.parse(savedPromisesList));
-    }
+    };
+    fetchData();
   }, []);
 
-  const handleHomeSave = (e) => {
+  const handleHomeSave = async (e) => {
     if (e) e.preventDefault();
-    localStorage.setItem("vg_home", JSON.stringify(homeData));
-    localStorage.setItem("vg_whatwedo_meta", JSON.stringify(whatWeDoMeta));
-    localStorage.setItem("vg_promises_meta", JSON.stringify(promisesMeta));
-    triggerToast("All Homepage settings saved successfully!");
+    try {
+      // Save to Firestore
+      await setDoc(doc(db, "home", "herosection"), homeData);
+      await setDoc(doc(db, "home", "whatwedo"), whatWeDoMeta);
+      await setDoc(doc(db, "home", "ourpromises"), { meta: promisesMeta, list: promisesList });
+      await setDoc(doc(db, "home", "majorclients"), { meta: majorClientsMeta, list: majorClientsList });
+      await setDoc(doc(db, "home", "referaclient"), { meta: referClientMeta, cards: referClientCards });
+
+      // Save to localStorage as backup
+      localStorage.setItem("vg_home", JSON.stringify(homeData));
+      localStorage.setItem("vg_whatwedo_meta", JSON.stringify(whatWeDoMeta));
+      localStorage.setItem("vg_majorclients_meta", JSON.stringify(majorClientsMeta));
+      localStorage.setItem("vg_promises_meta", JSON.stringify(promisesMeta));
+      localStorage.setItem("vg_referclient_meta", JSON.stringify(referClientMeta));
+      
+      triggerToast("All Homepage settings saved to database successfully!");
+    } catch (error) {
+      console.error("Error saving to database:", error);
+      triggerToast("Failed to save settings to database.", "error");
+    }
   };
 
   const handleImageUpload = (e, index) => {
@@ -111,22 +185,7 @@ export default function HomeSettings({ triggerToast }) {
     }
   };
 
-  // Ticker Handlers
-  const handleAddTickerItem = () => {
-    if (!tickerModal.text.trim()) return;
-    const updated = [...tickerItems, tickerModal.text.trim()];
-    setTickerItems(updated);
-    localStorage.setItem("vg_ticker_items", JSON.stringify(updated));
-    setTickerModal({ show: false, text: "" });
-    triggerToast("Ticker item added successfully!");
-  };
 
-  const handleDeleteTickerItem = (index) => {
-    const updated = tickerItems.filter((_, i) => i !== index);
-    setTickerItems(updated);
-    localStorage.setItem("vg_ticker_items", JSON.stringify(updated));
-    triggerToast("Ticker item removed!", "error");
-  };
 
   // Services Handlers
   const openServiceModal = (mode, data = null) => {
@@ -181,7 +240,7 @@ export default function HomeSettings({ triggerToast }) {
     }
 
     setServices(updatedServices);
-    localStorage.setItem("vg_services", JSON.stringify(updatedServices));
+    localStorage.setItem("vg_services_v2", JSON.stringify(updatedServices));
     setServiceModal({ show: false, mode: "add", data: null });
   };
 
@@ -189,7 +248,7 @@ export default function HomeSettings({ triggerToast }) {
     if (window.confirm("Are you sure you want to delete this service?")) {
       const updated = services.filter((s) => s.id !== id);
       setServices(updated);
-      localStorage.setItem("vg_services", JSON.stringify(updated));
+      localStorage.setItem("vg_services_v2", JSON.stringify(updated));
       triggerToast("Service deleted!", "error");
     }
   };
@@ -248,6 +307,130 @@ export default function HomeSettings({ triggerToast }) {
     }
   };
 
+  // Major Client Handlers
+  const handleMajorClientImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 1.5 * 1024 * 1024) {
+        triggerToast("Image is too large (max 1.5MB). Please compress it first.", "error");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setMajorClientForm(prev => ({ ...prev, image: reader.result }));
+        triggerToast("Image loaded successfully!");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleMajorClientSubmit = (e) => {
+    if (e) e.preventDefault();
+    if (majorClientModal.mode === "add") {
+      const newClient = {
+        id: Date.now(),
+        name: majorClientForm.name,
+        description: majorClientForm.description,
+        image: majorClientForm.image || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
+      };
+      const updated = [...majorClientsList, newClient];
+      setMajorClientsList(updated);
+      localStorage.setItem("vg_majorclients_list", JSON.stringify(updated));
+      triggerToast("Client added successfully!");
+    } else {
+      const updated = majorClientsList.map((c) => {
+        if (c.id === majorClientModal.data.id) {
+          return {
+            ...c,
+            name: majorClientForm.name,
+            description: majorClientForm.description,
+            image: majorClientForm.image
+          };
+        }
+        return c;
+      });
+      setMajorClientsList(updated);
+      localStorage.setItem("vg_majorclients_list", JSON.stringify(updated));
+      triggerToast("Client updated successfully!");
+    }
+    setMajorClientModal({ show: false, mode: "add", data: null });
+    setMajorClientForm({ name: "", description: "", image: "" });
+  };
+
+  const handleDeleteMajorClient = (id) => {
+    if (window.confirm("Are you sure you want to delete this client?")) {
+      const updated = majorClientsList.filter((c) => c.id !== id);
+      setMajorClientsList(updated);
+      localStorage.setItem("vg_majorclients_list", JSON.stringify(updated));
+      triggerToast("Client deleted!", "error");
+    }
+  };
+
+  const openMajorClientModal = (mode, data = null) => {
+    setMajorClientModal({ show: true, mode, data });
+    if (mode === "edit" && data) {
+      setMajorClientForm({ name: data.name, description: data.description, image: data.image });
+    } else {
+      setMajorClientForm({ name: "", description: "", image: "" });
+    }
+  };
+
+  // Refer Client Handlers
+  const handleReferClientSubmit = (e) => {
+    if (e) e.preventDefault();
+    if (referClientModal.mode === "add") {
+      if (referClientCards.length >= 4) {
+        triggerToast("Only up to 4 cards can be added.", "error");
+        return;
+      }
+      const newCard = {
+        id: Date.now(),
+        title: referClientForm.title,
+        subtitle: referClientForm.subtitle,
+        buttonLabel: referClientForm.buttonLabel
+      };
+      const updated = [...referClientCards, newCard];
+      setReferClientCards(updated);
+      localStorage.setItem("vg_referclient_cards", JSON.stringify(updated));
+      triggerToast("Card added successfully!");
+    } else {
+      const updated = referClientCards.map((c) => {
+        if (c.id === referClientModal.data.id) {
+          return {
+            ...c,
+            title: referClientForm.title,
+            subtitle: referClientForm.subtitle,
+            buttonLabel: referClientForm.buttonLabel
+          };
+        }
+        return c;
+      });
+      setReferClientCards(updated);
+      localStorage.setItem("vg_referclient_cards", JSON.stringify(updated));
+      triggerToast("Card updated successfully!");
+    }
+    setReferClientModal({ show: false, mode: "add", data: null });
+    setReferClientForm({ title: "", subtitle: "", buttonLabel: "" });
+  };
+
+  const handleDeleteReferClient = (id) => {
+    if (window.confirm("Are you sure you want to delete this card?")) {
+      const updated = referClientCards.filter((c) => c.id !== id);
+      setReferClientCards(updated);
+      localStorage.setItem("vg_referclient_cards", JSON.stringify(updated));
+      triggerToast("Card deleted!", "error");
+    }
+  };
+
+  const openReferClientModal = (mode, data = null) => {
+    setReferClientModal({ show: true, mode, data });
+    if (mode === "edit" && data) {
+      setReferClientForm({ title: data.title, subtitle: data.subtitle, buttonLabel: data.buttonLabel });
+    } else {
+      setReferClientForm({ title: "", subtitle: "", buttonLabel: "" });
+    }
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between mb-8 pb-5 border-b border-violet-100/50">
@@ -295,6 +478,18 @@ export default function HomeSettings({ triggerToast }) {
             </div>
           </div>
 
+          <div>
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Description</label>
+            <textarea
+              rows={3}
+              value={homeData.heroDescription}
+              onChange={(e) => setHomeData({ ...homeData, heroDescription: e.target.value })}
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#6340b2] resize-none"
+              placeholder="Enter hero paragraph description..."
+              required
+            />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Button Label 1</label>
@@ -319,18 +514,6 @@ export default function HomeSettings({ triggerToast }) {
                 required
               />
             </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Description</label>
-            <textarea
-              rows={3}
-              value={homeData.heroDescription}
-              onChange={(e) => setHomeData({ ...homeData, heroDescription: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#6340b2] resize-none"
-              placeholder="Enter hero paragraph description..."
-              required
-            />
           </div>
 
           {/* Image Uploads */}
@@ -378,32 +561,7 @@ export default function HomeSettings({ triggerToast }) {
         </form>
       </div>
 
-      {/* Ticker Settings */}
-      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-violet-100/60 shadow-sm p-6">
-        <div className="flex items-center justify-between mb-4 gap-4">
-          <div>
-            <h3 className="text-lg font-bold text-slate-800">Services Slider Settings</h3>
-            <p className="text-xs text-slate-400 font-medium">Manage text items that scroll on the homepage services ticker.</p>
-          </div>
-          <button type="button" onClick={() => setTickerModal({ show: true, text: "" })} className="inline-flex items-center gap-1.5 bg-violet-50 text-[#6340b2] px-4 py-2.5 rounded-xl font-bold text-xs uppercase cursor-pointer border border-violet-100">
-            Add Service
-          </button>
-        </div>
-        {tickerItems.length > 0 ? (
-          <div className="flex flex-wrap gap-2.5 max-h-48 overflow-y-auto p-2 bg-slate-50 rounded-xl border border-slate-100 mb-4 mt-4">
-            {tickerItems.map((item, index) => (
-              <div key={index} className="flex items-center gap-2 bg-white border border-violet-100 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm hover:border-[#6340b2]/30 transition-all">
-                <span>{item}</span>
-                <button type="button" onClick={() => handleDeleteTickerItem(index)} className="text-slate-400 hover:text-red-500 cursor-pointer" title="Delete Item">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-xs text-slate-400 font-medium mb-4">No items added to the services slider yet.</p>
-        )}
-      </div>
+
 
       {/* What We Do Settings */}
       <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-violet-100/60 shadow-sm p-6">
@@ -470,7 +628,7 @@ export default function HomeSettings({ triggerToast }) {
       </div>
 
       {/* Our Promises Settings */}
-      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-violet-100/60 shadow-sm p-6">
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-violet-100/60 shadow-sm p-6 mb-6">
         <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
           <div>
             <h3 className="text-lg font-bold text-slate-800">Our Promises Settings</h3>
@@ -527,25 +685,178 @@ export default function HomeSettings({ triggerToast }) {
           </div>
         )}
       </div>
+
+      {/* Major Clients Settings */}
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-violet-100/60 shadow-sm p-6 mb-6">
+        <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
+          <div>
+            <h3 className="text-lg font-bold text-slate-800">Major Clients Settings</h3>
+            <p className="text-xs text-slate-400 font-medium">Configure title and description for the Major Clients section.</p>
+          </div>
+          <button type="button" onClick={() => openMajorClientModal("add")} className="inline-flex items-center gap-1 bg-violet-50 text-[#6340b2] px-3.5 py-2 rounded-xl font-bold text-xs uppercase cursor-pointer border border-violet-100">
+            Add Client
+          </button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+          <div>
+            <label className="block text-xs font-bold text-slate-600 uppercase mb-2">Section Title</label>
+            <input type="text" value={majorClientsMeta.title} onChange={(e) => setMajorClientsMeta({ ...majorClientsMeta, title: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2]" placeholder="e.g. Trusted by Industry Leaders" required />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-600 uppercase mb-2">Section Description</label>
+            <input type="text" value={majorClientsMeta.description} onChange={(e) => setMajorClientsMeta({ ...majorClientsMeta, description: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2]" placeholder="e.g. From architects to industrialists..." required />
+          </div>
+        </div>
+
+        <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-3 mt-6">Current Clients</h4>
+        {majorClientsList.length === 0 ? (
+          <p className="text-xs text-slate-400 font-medium py-3">No clients added yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {majorClientsList.map((c, index) => (
+              <div key={c.id || index} className="p-4 bg-slate-50/40 rounded-xl border border-slate-100/50 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-bold text-slate-400">Client #{index + 1}</span>
+                    <div className="flex gap-2 text-xs font-bold">
+                      <button type="button" onClick={() => openMajorClientModal("edit", c)} className="text-[#6340b2] cursor-pointer">Edit</button>
+                      <span className="text-slate-300">|</span>
+                      <button type="button" onClick={() => handleDeleteMajorClient(c.id)} className="text-red-600 cursor-pointer">Delete</button>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 mb-2">
+                    {c.image && (
+                      <img src={c.image} alt={c.name} className="w-10 h-10 rounded-full object-cover border border-slate-200" />
+                    )}
+                    <h5 className="text-sm font-bold text-slate-800">{c.name}</h5>
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed">{c.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Refer a Client Settings */}
+      <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-violet-100/60 shadow-sm p-6 mb-6">
+        <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
+          <div>
+            <h3 className="text-lg font-bold text-slate-800">Refer a Client Settings</h3>
+            <p className="text-xs text-slate-400 font-medium">Configure title, subtitle and cards for the Refer a Client section.</p>
+          </div>
+          <button type="button" onClick={() => { if (referClientCards.length >= 4) triggerToast("Max 4 cards allowed.", "error"); else openReferClientModal("add"); }} className="inline-flex items-center gap-1 bg-violet-50 text-[#6340b2] px-3.5 py-2 rounded-xl font-bold text-xs uppercase cursor-pointer border border-violet-100">
+            Add Card
+          </button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+          <div>
+            <label className="block text-xs font-bold text-slate-600 uppercase mb-2">Section Title</label>
+            <input type="text" value={referClientMeta.title} onChange={(e) => setReferClientMeta({ ...referClientMeta, title: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2]" placeholder="e.g. Refer a Client" required />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-600 uppercase mb-2">Section Subtitle</label>
+            <input type="text" value={referClientMeta.subtitle} onChange={(e) => setReferClientMeta({ ...referClientMeta, subtitle: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2]" placeholder="e.g. Help us grow and get rewarded" required />
+          </div>
+        </div>
+
+        <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-3 mt-6">Current Cards (Max 4)</h4>
+        {referClientCards.length === 0 ? (
+          <p className="text-xs text-slate-400 font-medium py-3">No cards added yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {referClientCards.map((c, index) => (
+              <div key={c.id || index} className="p-4 bg-slate-50/40 rounded-xl border border-slate-100/50 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-bold text-slate-400">Card #{index + 1}</span>
+                    <div className="flex gap-2 text-xs font-bold">
+                      <button type="button" onClick={() => openReferClientModal("edit", c)} className="text-[#6340b2] cursor-pointer">Edit</button>
+                      <span className="text-slate-300">|</span>
+                      <button type="button" onClick={() => handleDeleteReferClient(c.id)} className="text-red-600 cursor-pointer">Delete</button>
+                    </div>
+                  </div>
+                  <h5 className="text-sm font-bold text-slate-800 mb-1">{c.title}</h5>
+                  <p className="text-xs text-slate-500 mb-2">{c.subtitle}</p>
+                  <p className="text-[10px] font-bold text-[#6340b2] uppercase bg-violet-50 inline-block px-2 py-1 rounded">{c.buttonLabel}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       
       {/* Modals */}
-      {tickerModal.show && (
+
+      {referClientModal.show && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6">
           <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
-            <button onClick={() => setTickerModal({ show: false, text: "" })} className="absolute top-6 right-6 text-slate-400 cursor-pointer">
+            <button onClick={() => setReferClientModal({ show: false, mode: "add", data: null })} className="absolute top-6 right-6 text-slate-400 cursor-pointer">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
-            <h3 className="text-xl font-extrabold text-slate-900 mb-6 uppercase tracking-tight">Add Ticker Item</h3>
-            <div className="space-y-4">
+            <h3 className="text-xl font-extrabold text-slate-900 mb-6 uppercase tracking-tight">{referClientModal.mode === "add" ? "Add Card" : "Edit Card"}</h3>
+            <form onSubmit={handleReferClientSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-2">Service Name</label>
-                <input type="text" value={tickerModal.text} onChange={(e) => setTickerModal({ ...tickerModal, text: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2]" placeholder="e.g. Tough Glass Facades" />
+                <label className="block text-xs font-bold text-slate-600 uppercase mb-2">Card Title</label>
+                <input type="text" value={referClientForm.title} onChange={(e) => setReferClientForm({ ...referClientForm, title: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2]" required />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase mb-2">Card Subtitle</label>
+                <input type="text" value={referClientForm.subtitle} onChange={(e) => setReferClientForm({ ...referClientForm, subtitle: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2]" required />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase mb-2">Button Label</label>
+                <input type="text" value={referClientForm.buttonLabel} onChange={(e) => setReferClientForm({ ...referClientForm, buttonLabel: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2]" required />
               </div>
               <div className="flex gap-3 justify-end pt-4">
-                <button type="button" onClick={() => setTickerModal({ show: false, text: "" })} className="px-5 py-2.5 border border-slate-200 text-slate-500 rounded-xl font-bold text-xs uppercase cursor-pointer">Cancel</button>
-                <button type="button" onClick={handleAddTickerItem} className="px-5 py-2.5 bg-[#6340b2] text-white rounded-xl font-bold text-xs uppercase cursor-pointer">Add Item</button>
+                <button type="button" onClick={() => setReferClientModal({ show: false, mode: "add", data: null })} className="px-5 py-2.5 border border-slate-200 text-slate-500 rounded-xl font-bold text-xs uppercase cursor-pointer">Cancel</button>
+                <button type="submit" className="px-5 py-2.5 bg-[#6340b2] text-white rounded-xl font-bold text-xs uppercase cursor-pointer">{referClientModal.mode === "add" ? "Add Card" : "Save Changes"}</button>
               </div>
-            </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {majorClientModal.show && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
+            <button onClick={() => setMajorClientModal({ show: false, mode: "add", data: null })} className="absolute top-6 right-6 text-slate-400 cursor-pointer">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <h3 className="text-xl font-extrabold text-slate-900 mb-6 uppercase tracking-tight">{majorClientModal.mode === "add" ? "Add Client" : "Edit Client"}</h3>
+            <form onSubmit={handleMajorClientSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase mb-2">Client Name</label>
+                <input type="text" value={majorClientForm.name} onChange={(e) => setMajorClientForm({ ...majorClientForm, name: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2]" required />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase mb-2">Short Description</label>
+                <textarea rows={3} value={majorClientForm.description} onChange={(e) => setMajorClientForm({ ...majorClientForm, description: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2] resize-none" required />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-bold text-slate-600 uppercase">Image URL / Path</label>
+                  <div className="flex gap-1.5 bg-slate-100 p-0.5 rounded-lg">
+                    <button type="button" onClick={() => setMajorClientImageMode("link")} className={`px-2 py-1 rounded-md text-[10px] font-bold transition-all cursor-pointer ${majorClientImageMode === "link" ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}>Link / Path</button>
+                    <button type="button" onClick={() => setMajorClientImageMode("upload")} className={`px-2 py-1 rounded-md text-[10px] font-bold transition-all cursor-pointer ${majorClientImageMode === "upload" ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}>Upload File</button>
+                  </div>
+                </div>
+                {majorClientImageMode === "link" ? (
+                  <input type="text" value={majorClientForm.image} onChange={(e) => setMajorClientForm({ ...majorClientForm, image: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2]" placeholder="e.g. src/assets/architects.png" />
+                ) : (
+                  <input type="file" accept="image/*" onChange={handleMajorClientImageUpload} className="w-full text-sm bg-white p-1.5 rounded-xl border border-slate-200 cursor-pointer file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#6340b2] file:text-white hover:file:bg-[#5231a3] transition-all" />
+                )}
+                {majorClientImageMode === "upload" && majorClientForm.image && majorClientForm.image.startsWith("data:") && (
+                  <div className="mt-3 relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-50">
+                    <img src={majorClientForm.image} alt="Preview" className="w-full h-full object-cover" />
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-3 justify-end pt-4">
+                <button type="button" onClick={() => setMajorClientModal({ show: false, mode: "add", data: null })} className="px-5 py-2.5 border border-slate-200 text-slate-500 rounded-xl font-bold text-xs uppercase cursor-pointer">Cancel</button>
+                <button type="submit" className="px-5 py-2.5 bg-[#6340b2] text-white rounded-xl font-bold text-xs uppercase cursor-pointer">{majorClientModal.mode === "add" ? "Add Client" : "Save Changes"}</button>
+              </div>
+            </form>
           </div>
         </div>
       )}

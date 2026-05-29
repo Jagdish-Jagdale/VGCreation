@@ -74,13 +74,13 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Right Column: Layered Glass Images Stack */}
-        <div className="lg:col-span-5 relative w-full h-[280px] sm:h-[350px] md:h-[450px] lg:h-[500px] xl:h-[550px] mt-8 lg:mt-0 select-none">
+        {/* Right Column: Images (Stacked on mobile, Layered on desktop) */}
+        <div className="lg:col-span-5 flex flex-col lg:block relative w-full gap-5 mt-8 lg:mt-0 select-none lg:h-[550px] xl:h-[620px]">
           {/* Decorative background shape */}
-          <div className="absolute top-12 left-12 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="hidden lg:block absolute top-12 left-12 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
 
           {/* Main Large Image */}
-          <div className="absolute left-0 top-0 w-[85%] h-[220px] sm:h-[280px] md:h-[360px] lg:h-[400px] xl:h-[450px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 transition-transform duration-500 hover:scale-[1.02]">
+          <div className="relative lg:absolute lg:left-0 lg:top-0 w-full lg:w-[90%] h-[250px] sm:h-[320px] md:h-[400px] lg:h-[450px] xl:h-[520px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 transition-transform duration-500 hover:scale-[1.02]">
             <img
               src={homeData.heroImage1}
               alt="Commercial Glass Facade"
@@ -89,7 +89,7 @@ export default function Home() {
           </div>
 
           {/* Overlapping Small Image */}
-          <div className="absolute right-0 bottom-0 w-[60%] h-[200px] sm:h-[250px] md:h-[260px] lg:h-[300px] xl:h-[340px] rounded-3xl overflow-hidden shadow-2xl border-4 border-[#0f6fa0] transition-transform duration-500 hover:scale-[1.03]">
+          <div className="relative lg:absolute lg:right-0 lg:bottom-0 w-full lg:w-[70%] h-[250px] sm:h-[320px] md:h-[400px] lg:h-[350px] xl:h-[400px] rounded-3xl overflow-hidden shadow-2xl border-4 border-[#0f6fa0] transition-transform duration-500 hover:scale-[1.03]">
             <img
               src={homeData.heroImage2}
               alt="Residential Glass Railing"

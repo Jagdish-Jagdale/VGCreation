@@ -6,7 +6,7 @@ export default function ManageServices({ triggerToast }) {
   const [serviceForm, setServiceForm] = useState({ title: "", category: "", description: "", features: "", image: "" });
 
   useEffect(() => {
-    const savedServices = localStorage.getItem("vg_services");
+    const savedServices = localStorage.getItem("vg_services_v2");
     if (savedServices) {
       setServices(JSON.parse(savedServices));
     }
@@ -64,7 +64,7 @@ export default function ManageServices({ triggerToast }) {
     }
 
     setServices(updatedServices);
-    localStorage.setItem("vg_services", JSON.stringify(updatedServices));
+    localStorage.setItem("vg_services_v2", JSON.stringify(updatedServices));
     setServiceModal({ show: false, mode: "add", data: null });
   };
 
@@ -72,7 +72,7 @@ export default function ManageServices({ triggerToast }) {
     if (window.confirm("Are you sure you want to delete this service?")) {
       const updated = services.filter((s) => s.id !== id);
       setServices(updated);
-      localStorage.setItem("vg_services", JSON.stringify(updated));
+      localStorage.setItem("vg_services_v2", JSON.stringify(updated));
       triggerToast("Service deleted!", "error");
     }
   };

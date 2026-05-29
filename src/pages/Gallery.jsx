@@ -17,119 +17,123 @@ import gallery14 from "../assets/gallery14.jpeg";
 const items = [
   {
     id: 1,
-    category: "COMMERCIAL",
+    category: "FASAD",
     title: "Structural Glass Facade",
     image: gallery1,
     isTall: true,
   },
   {
     id: 2,
-    category: "RESIDENTIAL",
+    category: "HOME",
     title: "Luxury Glass Railings",
     image: gallery2,
     isTall: false,
   },
   {
     id: 3,
-    category: "COMMERCIAL",
+    category: "CORPORATE",
     title: "Corporate Office Partitions",
     image: gallery3,
     isTall: false,
   },
   {
     id: 4,
-    category: "RESIDENTIAL",
+    category: "HOME",
     title: "Modern Shower Enclosure",
     image: gallery4,
     isTall: true,
   },
   {
     id: 5,
-    category: "COMMERCIAL",
+    category: "OFFICE",
     title: "Commercial Entrance Canopy",
     image: gallery5,
     isTall: true,
   },
   {
     id: 6,
-    category: "RESIDENTIAL",
+    category: "HOME",
     title: "Frameless Glass Balustrade",
     image: gallery6,
     isTall: false,
   },
   {
     id: 7,
-    category: "INDUSTRIAL",
+    category: "IT",
     title: "Industrial Exterior Glazing",
     image: gallery7,
     isTall: false,
   },
   {
     id: 8,
-    category: "RESIDENTIAL",
+    category: "HOME",
     title: "Premium LED Mirror",
     image: gallery8,
     isTall: true,
   },
   {
     id: 9,
-    category: "COMMERCIAL",
+    category: "FASAD",
     title: "Spider Glass Facade",
     image: gallery9,
     isTall: true,
   },
   {
     id: 10,
-    category: "RESIDENTIAL",
+    category: "OFFICE",
     title: "Acoustic Window Glass",
     image: gallery10,
     isTall: false,
   },
   {
     id: 11,
-    category: "COMMERCIAL",
+    category: "CORPORATE",
     title: "Office Glass Partition Wall",
     image: gallery11,
     isTall: false,
   },
   {
     id: 12,
-    category: "COMMERCIAL",
+    category: "OFFICE",
     title: "Frosted Office Glazing",
     image: gallery12,
     isTall: true,
   },
   {
     id: 13,
-    category: "INDUSTRIAL",
+    category: "IT",
     title: "Industrial Glass Skylight",
     image: gallery13,
     isTall: false,
   },
   {
     id: 14,
-    category: "RESIDENTIAL",
+    category: "HOME",
     title: "Designer Decorative Mirror",
     image: gallery14,
     isTall: true,
   },
 ];
 
-const categories = ["ALL", "COMMERCIAL", "INDUSTRIAL", "RESIDENTIAL"];
+const categories = ["ALL", "HOME", "CORPORATE", "OFFICE", "FASAD", "IT"];
 
 export default function Gallery() {
   const [galleryItems, setGalleryItems] = useState([]);
-  const [activeFilter, setActiveFilter] = useState("ALL");
+  const [activeFilter, setActiveFilter] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    const filterFromUrl = params.get("filter");
+    return filterFromUrl && categories.includes(filterFromUrl) ? filterFromUrl : "ALL";
+  });
   const [visibleCount, setVisibleCount] = useState(6);
   const [selectedIdx, setSelectedIdx] = useState(null);
 
   useEffect(() => {
     document.title = "Gallery | Vision Glass Creation";
-    const saved = localStorage.getItem("vg_gallery");
+    const saved = localStorage.getItem("vg_gallery_v2");
     if (saved) {
       setGalleryItems(JSON.parse(saved));
     } else {
-      localStorage.setItem("vg_gallery", JSON.stringify(items));
+      localStorage.setItem("vg_gallery_v2", JSON.stringify(items));
       setGalleryItems(items);
     }
   }, []);

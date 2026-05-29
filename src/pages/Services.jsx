@@ -8,242 +8,57 @@ import glazingImg from "../assets/Glass Glazing.jpg";
 const services = [
   {
     id: 1,
-    category: "WINDOWS",
-    title: "Aluminium & UPVC Windows",
-    description:
-      "Durable, weather-resistant window frames and partition systems for all building types — residential to industrial.",
-    features: ["ALUMINIUM", "UPVC", "CASEMENT", "SLIDING"],
-    image: windowsImg,
+    category: "HOME",
+    title: "Home",
+    description: "Complete glass interior solutions, sliding doors, and mirrors for residential spaces.",
+    features: ["RESIDENTIAL", "INTERIORS", "CUSTOM DESIGN"],
+    image: interiorImg,
     icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M3 3h18v18H3V3zm9 0v18M3 12h18" />
-      </svg>
+      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg>
     ),
   },
   {
     id: 2,
-    category: "MIRRORS",
-    title: "Decorative & LED Mirrors",
-    description:
-      "Backlit LED mirrors, decorative mirrors, vastu mirrors and custom mirror installations for all spaces.",
-    features: ["LED BACKLIT", "DECORATIVE", "VASTU", "CUSTOM SIZE"],
-    image: mirrorsImg,
+    category: "CORPORATE",
+    title: "Corporate",
+    description: "High-end glass partitions, meeting room enclosures, and premium interiors for corporate settings.",
+    features: ["PARTITIONS", "MEETING ROOMS", "ACOUSTIC"],
+    image: facadeImg,
     icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18" />
-      </svg>
+      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
     ),
   },
   {
     id: 3,
-    category: "FACADE",
-    title: "Structural & Semi-Structural Facade Work",
-    description:
-      "High-performance structural and semi-structural exterior glass facade systems for commercial buildings and IT parks.",
-    features: ["STRUCTURAL", "SEMI-STRUCTURAL", "CURTAIN WALL", "SPIDER GLASS"],
-    image: facadeImg,
+    category: "OFFICE",
+    title: "Office",
+    description: "Custom glass workstations, cabins, doors, and functional spaces for modern offices.",
+    features: ["WORKSTATIONS", "CABINS", "GLASS DOORS"],
+    image: windowsImg,
     icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-      </svg>
+      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
     ),
   },
   {
     id: 4,
-    category: "INTERIOR",
-    title: "Complete Glass Interior Solutions",
-    description:
-      "Custom glass shelving, cabinets, display units and full glass interior fitouts tailored to your design.",
-    features: ["SHELVING", "CABINETS", "PARTITIONS", "FITOUTS"],
-    image: interiorImg,
+    category: "FASAD WORK",
+    title: "Fasad Work",
+    description: "Structural and semi-structural facade work, curtain walls, and spider glass for building exteriors.",
+    features: ["STRUCTURAL", "SEMI-STRUCTURAL", "CURTAIN WALL"],
+    image: glazingImg,
     icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 14a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1v-5zm10 0a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1h-4a1 1 0 01-1-1v-5z" />
-      </svg>
+      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 14a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1v-5zm10 0a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1h-4a1 1 0 01-1-1v-5z"/></svg>
     ),
   },
   {
     id: 5,
-    category: "GLAZING",
-    title: "Glass Glazing Work",
-    description:
-      "Toughened glass glazing and composite ACP panel installations for building exteriors and interiors.",
-    features: ["TOUGHENED GLASS", "ACP PANEL", "EXTERIOR", "INTERIOR"],
-    image: glazingImg,
+    category: "IT PARK",
+    title: "IT Park",
+    description: "Large scale exterior glazing, energy-efficient glass installations, and massive window systems for IT parks.",
+    features: ["LARGE SCALE", "GLAZING", "ENERGY EFFICIENT"],
+    image: mirrorsImg,
     icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-      </svg>
-    ),
-  },
-  {
-    id: 6,
-    category: "RAILING",
-    title: "Glass Railings & Balustrades",
-    description:
-      "Modern and secure glass railing systems for balconies, staircases, and terraces, offering uninterrupted views.",
-    features: ["BALCONY", "STAIRCASE", "FRAMELESS", "STAINLESS STEEL"],
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
-    icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M2 8h20M4 8v12M9 8v12M14 8v12M19 8v12M2 20h20" />
-      </svg>
-    ),
-  },
-  {
-    id: 7,
-    category: "SHOWER",
-    title: "Shower Cubicles & Partitions",
-    description:
-      "Premium sliding or openable frameless glass shower cubicles and partitions, custom fit for modern bathrooms.",
-    features: ["FRAMELESS", "SLIDING", "OPENABLE", "TEMPERED GLASS"],
-    image: "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=800&q=80",
-    icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M4 3h16v18H4V3zm6 0v18M10 11h2v2h-2zM14 5l1 2m1-2l1 2M14 10l1 2m1-2l1 2" />
-      </svg>
-    ),
-  },
-  {
-    id: 8,
-    category: "SKYLIGHT",
-    title: "Skylight & Canopy Glass",
-    description:
-      "High-durability laminated and toughened glass for skylights, glass roofs, and entrance canopies, providing natural light.",
-    features: ["LAMINATED GLASS", "ENTRANCE CANOPY", "GLASS ROOF", "WEATHERPROOF"],
-    image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=800&q=80",
-    icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M3 12l9-6 9 6M5 12v8h14v-8M12 3v3M17 5l-2 2M7 5l2 2M12 12v8" />
-      </svg>
-    ),
-  },
-  {
-    id: 9,
-    category: "CANOPY",
-    title: "Glass Canopy & Pergola Work",
-    description:
-      "Architectural glass canopies and pergola systems designed to protect entrances while allowing natural sunlight.",
-    features: ["PERGOLA", "CANOPY", "LAMINATED", "TEMPERED"],
-    image: "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=800&q=80",
-    icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M4 18h16M4 14h16M4 10h16M4 6h16M2 22h20M12 2v4" />
-      </svg>
-    ),
-  },
-  {
-    id: 10,
-    category: "PARTITION",
-    title: "Toughened Glass Partitions",
-    description:
-      "Modern frameless toughened glass partitions for sleek, sound-insulated office cabins and conference rooms.",
-    features: ["OFFICE CABIN", "FRAMELESS", "SOUND INSULATION", "TOUGHENED"],
-    image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80",
-    icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M8 3v18M16 3v18M3 12h18M3 6h18M3 18h18" />
-      </svg>
-    ),
-  },
-  {
-    id: 11,
-    category: "GLAZING",
-    title: "Spider Glass Glazing",
-    description:
-      "Aesthetic point-supported spider glazing systems for high-rise commercial structures and double-height lobbies.",
-    features: ["SPIDER GLASS", "POINT-SUPPORTED", "LOBBIES", "COMMERCIAL"],
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
-    icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M12 2v20M2 12h20M5 5l14 14M5 19L19 5" />
-      </svg>
-    ),
-  },
-  {
-    id: 12,
-    category: "DESIGN",
-    title: "Glass Film & Frosted Work",
-    description:
-      "Frosted glass films, designer privacy films, and custom branding prints for interior partitions and office glass.",
-    features: ["FROSTED FILM", "PRIVACY FILM", "OFFICE BRANDING", "CUSTOM PRINTS"],
-    image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80",
-    icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M4 4h16v16H4V4zm4 4h8M8 12h8M8 16h8" />
-      </svg>
-    ),
-  },
-  {
-    id: 13,
-    category: "WINDOWS",
-    title: "Soundproof Acoustic Windows",
-    description:
-      "Double or triple glazed acoustic window systems designed to filter out external traffic noise and maintain silence.",
-    features: ["DOUBLE GLAZED", "ACOUSTIC GLASS", "NOISE CANCEL", "ENERGY EFFICIENT"],
-    image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=800&q=80",
-    icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M15.536 8.464a5 5 0 010 7.072M17.657 6.343a8 8 0 010 11.314M3 3h10v18H3V3zm5 0v18" />
-      </svg>
-    ),
-  },
-  {
-    id: 14,
-    category: "DOORS",
-    title: "Glass Doors & Sliding Systems",
-    description:
-      "Heavy-duty automatic sensor glass doors, manual sliding doors, and patch-fitting entry systems.",
-    features: ["AUTOMATIC SENSOR", "SLIDING SYSTEM", "PATCH FITTING", "ENTRYWAY"],
-    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
-    icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M8 3h12v18H8V3zM3 12h5M3 8h5M3 16h5" />
-      </svg>
-    ),
-  },
-  {
-    id: 15,
-    category: "INTERIOR",
-    title: "Backpainted Glass & Write Boards",
-    description:
-      "Premium colored backpainted glass for kitchen dado, office wall panels, and magnetic glass write boards.",
-    features: ["BACKPAINTED", "MAGNETIC WRITEBOARD", "KITCHEN DADO", "WALL CLADDING"],
-    image: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=800&q=80",
-    icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M12 3v12M12 15a3 3 0 100-6 3 3 0 000 6zm-7-4l2-2m10 0l2 2m-8 6h4" />
-      </svg>
-    ),
-  },
-  {
-    id: 16,
-    category: "DOORS",
-    title: "PVC & Fiber Doors",
-    description:
-      "Waterproof and high-durability PVC, WPC, and fiber doors suitable for toilets, bathrooms, and utility areas.",
-    features: ["PVC DOORS", "FIBER DOORS", "WATERPROOF", "BATHROOM DOORS"],
-    image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=800&q=80",
-    icon: (
-      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M6 3h12v18H6V3zm6 8h2v2h-2z" />
-      </svg>
+      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/></svg>
     ),
   },
 ];
@@ -254,11 +69,11 @@ export default function Services() {
 
   useEffect(() => {
     document.title = "Services | Vision Glass Creation";
-    const saved = localStorage.getItem("vg_services");
+    const saved = localStorage.getItem("vg_services_v2");
     if (saved) {
       setServicesList(JSON.parse(saved));
     } else {
-      localStorage.setItem("vg_services", JSON.stringify(services));
+      localStorage.setItem("vg_services_v2", JSON.stringify(services));
       setServicesList(services);
     }
   }, []);
@@ -334,17 +149,7 @@ export default function Services() {
                   {service.description}
                 </p>
 
-                {/* Sub-features/tags */}
-                <div className="flex flex-wrap gap-1.5 mb-5">
-                  {service.features.map((feature) => (
-                    <span
-                      key={feature}
-                      className="text-[9px] font-bold text-slate-500 bg-slate-50 border border-slate-100 px-2 py-0.5 rounded"
-                    >
-                      {feature}
-                    </span>
-                  ))}
-                </div>
+
 
                 {/* Bottom Card Action Footer */}
                 <div className="flex items-center justify-between pt-3.5 border-t border-slate-50 text-xs">
@@ -356,12 +161,15 @@ export default function Services() {
                     <span className="font-normal">→</span>
                   </a>
                   
-                  <span className="text-[9px] font-bold text-slate-400 tracking-wider flex items-center gap-1 uppercase">
-                    <svg className="w-3 h-3 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  <a
+                    href={`/gallery?filter=${service.title.split(' ')[0].toUpperCase()}`}
+                    className="text-[9px] font-bold text-slate-400 tracking-wider flex items-center gap-1 uppercase hover:text-[#1481b8] transition-colors"
+                  >
+                    <svg className="w-3 h-3 text-[#1481b8] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    Certified
-                  </span>
+                    View Our Work
+                  </a>
                 </div>
               </div>
             </div>

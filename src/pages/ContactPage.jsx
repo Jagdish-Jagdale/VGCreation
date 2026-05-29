@@ -208,10 +208,10 @@ export default function ContactPage() {
                   />
                 </div>
 
-                {/* Requirement Dropdown */}
+                {/* Service Title Dropdown */}
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="requirement" className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                    Requirement *
+                    Service Title *
                   </label>
                   <select
                     id="requirement"
@@ -221,11 +221,11 @@ export default function ContactPage() {
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:border-[#1481b8] focus:ring-1 focus:ring-[#1481b8]/30 transition-all text-sm"
                   >
                     <option value="">Select Service Type</option>
-                    <option value="Glass Partitions">Glass Partitions</option>
-                    <option value="Windows">Aluminium & UPVC Windows</option>
-                    <option value="Facade">Structural Facade</option>
-                    <option value="Glazing">Glass Glazing</option>
-                    <option value="Mirrors">LED & Vastu Mirrors</option>
+                    <option value="Home">Home</option>
+                    <option value="Corporate">Corporate</option>
+                    <option value="Office">Office</option>
+                    <option value="Fasad Work">Fasad Work</option>
+                    <option value="IT Park">IT Park</option>
                     <option value="Other">Other Inquiry</option>
                   </select>
                 </div>

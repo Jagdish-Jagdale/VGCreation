@@ -8,72 +8,57 @@ import glazingImg from "../assets/Glass Glazing.jpg";
 const services = [
   {
     id: 1,
-    category: "WINDOWS",
-    title: "Aluminium & UPVC Windows",
-    description:
-      "Durable, weather-resistant window frames and partition systems for all building types — residential to industrial.",
-    image: windowsImg,
+    category: "HOME",
+    title: "Home",
+    description: "Complete glass interior solutions, sliding doors, and mirrors for residential spaces.",
+    features: ["RESIDENTIAL", "INTERIORS", "CUSTOM DESIGN"],
+    image: interiorImg,
     icon: (
-      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M3 3h18v18H3V3zm9 0v18M3 12h18" />
-      </svg>
+      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg>
     ),
   },
   {
     id: 2,
-    category: "MIRRORS",
-    title: "Decorative & LED Mirrors",
-    description:
-      "Backlit LED mirrors, decorative mirrors, vastu mirrors and custom mirror installations for all spaces.",
-    image: mirrorsImg,
+    category: "CORPORATE",
+    title: "Corporate",
+    description: "High-end glass partitions, meeting room enclosures, and premium interiors for corporate settings.",
+    features: ["PARTITIONS", "MEETING ROOMS", "ACOUSTIC"],
+    image: facadeImg,
     icon: (
-      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18" />
-      </svg>
+      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
     ),
   },
   {
     id: 3,
-    category: "FACADE",
-    title: "Structural & Semi-Structural Facade Work",
-    description:
-      "High-performance structural and semi-structural exterior glass facade systems for commercial buildings and IT parks.",
-    image: facadeImg,
+    category: "OFFICE",
+    title: "Office",
+    description: "Custom glass workstations, cabins, doors, and functional spaces for modern offices.",
+    features: ["WORKSTATIONS", "CABINS", "GLASS DOORS"],
+    image: windowsImg,
     icon: (
-      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-      </svg>
+      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
     ),
   },
   {
     id: 4,
-    category: "INTERIOR",
-    title: "Complete Glass Interior Solutions",
-    description:
-      "Custom glass shelving, cabinets, display units and full glass interior fitouts tailored to your design.",
-    image: interiorImg,
+    category: "FASAD WORK",
+    title: "Fasad Work",
+    description: "Structural and semi-structural facade work, curtain walls, and spider glass for building exteriors.",
+    features: ["STRUCTURAL", "SEMI-STRUCTURAL", "CURTAIN WALL"],
+    image: glazingImg,
     icon: (
-      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 14a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1v-5zm10 0a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1h-4a1 1 0 01-1-1v-5z" />
-      </svg>
+      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 14a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1v-5zm10 0a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1h-4a1 1 0 01-1-1v-5z"/></svg>
     ),
   },
   {
     id: 5,
-    category: "GLAZING",
-    title: "Glass Glazing Work",
-    description:
-      "Toughened glass glazing and composite ACP panel installations for building exteriors and interiors.",
-    image: glazingImg,
+    category: "IT PARK",
+    title: "IT Park",
+    description: "Large scale exterior glazing, energy-efficient glass installations, and massive window systems for IT parks.",
+    features: ["LARGE SCALE", "GLAZING", "ENERGY EFFICIENT"],
+    image: mirrorsImg,
     icon: (
-      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-      </svg>
+      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/></svg>
     ),
   },
 ];
@@ -86,7 +71,7 @@ export default function WhatWeDo() {
   });
 
   useEffect(() => {
-    const saved = localStorage.getItem("vg_services");
+    const saved = localStorage.getItem("vg_services_v2");
     if (saved) {
       setServicesList(JSON.parse(saved));
     } else {
@@ -165,23 +150,25 @@ export default function WhatWeDo() {
         </div>
 
         {/* View All Services Button */}
-        <div className="flex justify-center mt-12">
-          <a
-            href="/services"
-            className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-white border border-slate-200 text-slate-700 hover:text-[#1481b8] hover:border-[#1481b8]/50 rounded-full text-sm font-semibold transition-all duration-200 hover:shadow-sm group"
-          >
-            View All Services
-            <svg 
-              className="w-4 h-4 transform transition-transform group-hover:translate-x-0.5" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2.5" 
-              viewBox="0 0 24 24"
+        {servicesList.length > 6 && (
+          <div className="flex justify-center mt-12">
+            <a
+              href="/services"
+              className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-white border border-slate-200 text-slate-700 hover:text-[#1481b8] hover:border-[#1481b8]/50 rounded-full text-sm font-semibold transition-all duration-200 hover:shadow-sm group"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </a>
-        </div>
+              View All Services
+              <svg 
+                className="w-4 h-4 transform transition-transform group-hover:translate-x-0.5" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2.5" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+          </div>
+        )}
       </div>
     </section>
   );
