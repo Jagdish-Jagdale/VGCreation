@@ -25,19 +25,9 @@ const SECTION_TITLES = {
 export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
  
-  // Scroll to top immediately on path change, then scroll smoothly to sections if targeting homepage layout
+  // Scroll to top immediately on path change
   useEffect(() => {
     window.scrollTo(0, 0);
-
-    if (currentPath === "/") {
-      const timer = setTimeout(() => {
-        const element = document.getElementById("home");
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 100);
-      return () => clearTimeout(timer);
-    }
   }, [currentPath]);
 
   useEffect(() => {

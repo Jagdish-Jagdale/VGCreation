@@ -1,32 +1,41 @@
 import { useState, useEffect } from "react";
+import { db } from "../../firebase";
+import { collection, onSnapshot, doc, updateDoc, deleteDoc, orderBy, query } from "firebase/firestore";
 
 export default function EnquiriesLog({ triggerToast }) {
   const [enquiries, setEnquiries] = useState([]);
 
   useEffect(() => {
-    const savedEnquiries = localStorage.getItem("vg_enquiries");
-    if (savedEnquiries) {
-      setEnquiries(JSON.parse(savedEnquiries));
-    }
+    const q = query(collection(db, "enquiry"), orderBy("date", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setEnquiries(list);
+    }, (error) => {
+      console.error("Error fetching enquiries:", error);
+    });
+    return () => unsubscribe();
   }, []);
 
-  const handleToggleEnquiryStatus = (id) => {
-    const updated = enquiries.map((enq) => {
-      if (enq.id === id) {
-        return { ...enq, status: enq.status === "unread" ? "read" : "unread" };
-      }
-      return enq;
-    });
-    setEnquiries(updated);
-    localStorage.setItem("vg_enquiries", JSON.stringify(updated));
-    triggerToast("Enquiry status updated!");
+  const handleToggleEnquiryStatus = async (id, currentStatus) => {
+    try {
+      await updateDoc(doc(db, "enquiry", id), {
+        status: currentStatus === "unread" ? "read" : "unread"
+      });
+      triggerToast("Enquiry status updated!");
+    } catch (error) {
+      console.error("Error updating status:", error);
+      triggerToast("Failed to update status", "error");
+    }
   };
 
-  const handleDeleteEnquiry = (id) => {
-    const updated = enquiries.filter((enq) => enq.id !== id);
-    setEnquiries(updated);
-    localStorage.setItem("vg_enquiries", JSON.stringify(updated));
-    triggerToast("Enquiry deleted!", "error");
+  const handleDeleteEnquiry = async (id) => {
+    try {
+      await deleteDoc(doc(db, "enquiry", id));
+      triggerToast("Enquiry deleted!", "error");
+    } catch (error) {
+      console.error("Error deleting enquiry:", error);
+      triggerToast("Failed to delete", "error");
+    }
   };
 
   return (
@@ -34,7 +43,7 @@ export default function EnquiriesLog({ triggerToast }) {
       {/* Page Header */}
       <div className="flex items-center justify-between mb-8 pb-5 border-b border-violet-100/50">
         <div>
-          <h2 className="text-xl font-extrabold text-slate-800 tracking-tight">Enquiries & Quotations Log</h2>
+          <h2 className="text-xl font-extrabold text-slate-800 tracking-tight">Enquiry</h2>
           <p className="text-sm text-slate-400 font-medium mt-1">Monitor and respond to customer quotation submissions in real-time.</p>
         </div>
         <div className="text-xs font-bold bg-violet-50 text-[#6340b2] px-3.5 py-2 rounded-xl border border-violet-100/60 shadow-sm">
@@ -84,7 +93,7 @@ export default function EnquiriesLog({ triggerToast }) {
                   <td className="px-6 py-4 text-right">
                     <div className="flex gap-2 justify-end items-center font-bold text-xs">
                       <button
-                        onClick={() => handleToggleEnquiryStatus(enq.id)}
+                        onClick={() => handleToggleEnquiryStatus(enq.id, enq.status)}
                         className={`${enq.status === "unread" ? "text-green-600" : "text-amber-600"} hover:underline cursor-pointer`}
                       >
                         {enq.status === "unread" ? "Mark Read" : "Mark Unread"}

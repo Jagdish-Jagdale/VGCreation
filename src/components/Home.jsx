@@ -1,39 +1,77 @@
 import { useState, useEffect } from "react";
 import { db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import hero1 from "../assets/hero1.jpeg";
 import hero2 from "../assets/gallery10.jpeg";
 
 export default function Home() {
-  const [homeData, setHomeData] = useState({
-    heroPrimaryTitle: "Expert in Window",
-    heroSecondaryTitle: "& Glass Solutions",
-    heroDescription: "Premium glass partitions, facades, mirrors and window solutions for commercial, residential and industrial spaces across Pune.",
-    heroBtn1Text: "Get a Free Quote",
-    heroBtn2Text: "View Our Work",
-    heroImage1: hero1,
-    heroImage2: hero2
+  const [homeData, setHomeData] = useState(() => {
+    const saved = localStorage.getItem("vg_home");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return {
+          ...parsed,
+          heroImage1: (parsed.heroImage1 && !parsed.heroImage1.includes("src/assets")) ? parsed.heroImage1 : hero1,
+          heroImage2: (parsed.heroImage2 && !parsed.heroImage2.includes("src/assets")) ? parsed.heroImage2 : hero2
+        };
+      } catch (e) {}
+    }
+    return null;
   });
 
   useEffect(() => {
-    const fetchHero = async () => {
-      try {
-        const docSnap = await getDoc(doc(db, "home", "herosection"));
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setHomeData(prev => ({
-            ...prev,
-            ...data,
-            heroImage1: (data.heroImage1 && !data.heroImage1.includes("src/assets")) ? data.heroImage1 : hero1,
-            heroImage2: (data.heroImage2 && !data.heroImage2.includes("src/assets")) ? data.heroImage2 : hero2
-          }));
-        }
-      } catch (error) {
-        console.error("Failed to fetch home settings from Firebase:", error);
+    const unsubscribe = onSnapshot(doc(db, "home", "herosection"), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setHomeData({
+          ...data,
+          heroImage1: (data.heroImage1 && !data.heroImage1.includes("src/assets")) ? data.heroImage1 : hero1,
+          heroImage2: (data.heroImage2 && !data.heroImage2.includes("src/assets")) ? data.heroImage2 : hero2
+        });
+        localStorage.setItem("vg_home", JSON.stringify(data));
+      } else {
+        const defaultData = {
+          heroPrimaryTitle: "",
+          heroSecondaryTitle: "",
+          heroDescription: "",
+          heroBtn1Text: "",
+          heroBtn2Text: "",
+          heroImage1: hero1,
+          heroImage2: hero2
+        };
+        setHomeData(defaultData);
       }
-    };
-    fetchHero();
+    }, (error) => {
+      console.error("Failed to fetch home settings from Firebase:", error);
+    });
+
+    return () => unsubscribe();
   }, []);
+
+  if (!homeData) {
+    return (
+      <section className="min-h-[calc(100vh-80px)] lg:h-[calc(100vh-80px)] flex items-center justify-center bg-gradient-to-br from-[#1481b8] via-[#0f6fa0] to-[#0a5880] py-10 md:py-16 lg:py-0 overflow-hidden">
+        <div className="max-w-6xl mx-auto px-6 md:px-16 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full animate-pulse">
+          <div className="lg:col-span-7 flex flex-col items-start w-full gap-4">
+            <div className="h-10 bg-sky-200/20 rounded w-3/4"></div>
+            <div className="h-10 bg-sky-200/20 rounded w-1/2 mb-4"></div>
+            <div className="h-4 bg-sky-200/20 rounded w-full"></div>
+            <div className="h-4 bg-sky-200/20 rounded w-5/6"></div>
+            <div className="h-4 bg-sky-200/20 rounded w-4/6 mb-6"></div>
+            <div className="flex gap-4">
+              <div className="h-12 w-32 bg-sky-200/20 rounded-full"></div>
+              <div className="h-12 w-36 bg-sky-200/20 rounded-full"></div>
+            </div>
+          </div>
+          <div className="lg:col-span-5 flex flex-col lg:block relative w-full h-[300px] lg:h-[500px]">
+             <div className="w-full h-full bg-sky-200/20 rounded-3xl"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
 
 
   return (
@@ -86,6 +124,7 @@ export default function Home() {
             <img
               src={homeData.heroImage1}
               alt="Commercial Glass Facade"
+              fetchpriority="high"
               className="w-full h-full object-cover"
             />
           </div>
@@ -95,6 +134,7 @@ export default function Home() {
             <img
               src={homeData.heroImage2}
               alt="Residential Glass Railing"
+              fetchpriority="high"
               className="w-full h-full object-cover"
             />
           </div>

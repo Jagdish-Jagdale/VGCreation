@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { db } from "../../firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const defaultContact = {
   phone1: "+91 99219 17083",
@@ -15,25 +17,41 @@ export default function ContactSettings({ triggerToast }) {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    const savedContact = localStorage.getItem("vg_contact");
-    if (savedContact) {
-      const parsed = JSON.parse(savedContact);
-      setContactData({ ...defaultContact, ...parsed });
-    } else {
-      localStorage.setItem("vg_contact", JSON.stringify(defaultContact));
-    }
+    const fetchContact = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, "settings", "contact"));
+        if (docSnap.exists()) {
+          setContactData({ ...defaultContact, ...docSnap.data() });
+        } else {
+          const savedContact = localStorage.getItem("vg_contact");
+          if (savedContact) {
+            const parsed = JSON.parse(savedContact);
+            setContactData({ ...defaultContact, ...parsed });
+          } else {
+            localStorage.setItem("vg_contact", JSON.stringify(defaultContact));
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch contact settings:", error);
+      }
+    };
+    fetchContact();
   }, []);
 
   const handleContactSave = async (e) => {
     e.preventDefault();
     setIsSaving(true);
     
-    // Simulate network delay for UI consistency
-    await new Promise(resolve => setTimeout(resolve, 400));
-    
-    localStorage.setItem("vg_contact", JSON.stringify(contactData));
-    triggerToast("Contact Us settings saved successfully!");
-    setIsSaving(false);
+    try {
+      await setDoc(doc(db, "settings", "contact"), contactData);
+      localStorage.setItem("vg_contact", JSON.stringify(contactData));
+      triggerToast("Contact Us settings saved to database successfully!");
+    } catch (error) {
+      console.error("Failed to save contact settings:", error);
+      triggerToast("Failed to save settings.", "error");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (

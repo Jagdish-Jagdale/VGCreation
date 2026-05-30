@@ -6,12 +6,12 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 
 const defaultHome = {
-  heroBadge: "Pune's Trusted Glass Experts",
-  heroPrimaryTitle: "Expert in Window",
-  heroSecondaryTitle: "& Glass Solutions",
-  heroDescription: "Premium glass partitions, facades, mirrors and window solutions for commercial, residential and industrial spaces across Pune.",
-  heroBtn1Text: "Get a Free Quote",
-  heroBtn2Text: "View Our Work",
+  heroBadge: "",
+  heroPrimaryTitle: "",
+  heroSecondaryTitle: "",
+  heroDescription: "",
+  heroBtn1Text: "",
+  heroBtn2Text: "",
   heroImage1: "",
   heroImage2: ""
 };
@@ -26,18 +26,18 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
 
 
   const [whatWeDoMeta, setWhatWeDoMeta] = useState({
-    title: "Our Services",
-    description: "End-to-end glass solutions, crafted with precision and delivered with care across Pune's skyline."
+    title: "",
+    description: ""
   });
 
   const [majorClientsMeta, setMajorClientsMeta] = useState({
-    title: "Trusted by Industry Leaders",
-    description: "From architects to industrialists — they all rely on Vision Glass."
+    title: "",
+    description: ""
   });
 
   const [referClientMeta, setReferClientMeta] = useState({
-    title: "Refer a Client",
-    subtitle: "Help us grow and get rewarded"
+    title: "",
+    subtitle: ""
   });
 
   const [services, setServices] = useState([]);
@@ -45,10 +45,10 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
   const [serviceForm, setServiceForm] = useState({ title: "", category: "", description: "", features: "", image: "" });
 
   const [promisesMeta, setPromisesMeta] = useState({
-    title1: "Complete glass solutions under one roof —",
-    title2: "quality guaranteed.",
-    description: "Professional finishing on every project, large or small. We deliver exceptional value through specialized craftsmanship, reliable delivery, and premium materials designed to elevate your architectural spaces.",
-    buttonLabel: "Start Your Project"
+    title1: "",
+    title2: "",
+    description: "",
+    buttonLabel: ""
   });
   const [promisesList, setPromisesList] = useState([]);
   const [promiseModal, setPromiseModal] = useState({ show: false, mode: "add", data: null });

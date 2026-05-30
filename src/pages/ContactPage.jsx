@@ -1,22 +1,34 @@
 import { useState, useEffect } from "react";
+import { db } from "../firebase";
+import { doc, onSnapshot, collection, addDoc } from "firebase/firestore";
 
 export default function ContactPage() {
   document.title = "Contact Us | Vision Glass Creation";
 
-  const [contactInfo, setContactInfo] = useState({
-    phone1: "+91 99219 17083",
-    phone2: "+91 78409 17083",
-    email: "visionglasscreation1@gmail.com",
-    address: "Plot No. 595, Ganganagar, Nigdi, Pimpri-Chinchwad 411044",
-    whatsapp: "+91 99219 17083",
-    mapsUrl: "https://maps.google.com/?q=Vision+Glass+Creation+Plot+No.+595+Ganganagar+Nigdi+Pimpri-Chinchwad+411044"
+  const [contactInfo, setContactInfo] = useState(() => {
+    const saved = localStorage.getItem("vg_contact");
+    return saved ? JSON.parse(saved) : {
+      phone1: "",
+      phone2: "",
+      email: "",
+      address: "",
+      whatsapp: "",
+      mapsUrl: ""
+    };
   });
 
   useEffect(() => {
-    const saved = localStorage.getItem("vg_contact");
-    if (saved) {
-      setContactInfo(JSON.parse(saved));
-    }
+    const unsubscribe = onSnapshot(doc(db, "settings", "contact"), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setContactInfo(data);
+        localStorage.setItem("vg_contact", JSON.stringify(data));
+      }
+    }, (error) => {
+      console.error("Failed to fetch contact info:", error);
+    });
+    
+    return () => unsubscribe();
   }, []);
 
   const [formData, setFormData] = useState({
@@ -45,7 +57,7 @@ export default function ContactPage() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
 
@@ -79,31 +91,32 @@ export default function ContactPage() {
       return;
     }
 
-    // Store in enquiries
-    const savedEnquiries = localStorage.getItem("vg_enquiries");
-    const enquiries = savedEnquiries ? JSON.parse(savedEnquiries) : [];
-    enquiries.unshift({
-      id: Date.now(),
-      name: formData.name.trim(),
-      phone: formData.phone,
-      email: formData.email.trim(),
-      requirement: formData.requirement,
-      message: formData.message.trim(),
-      date: new Date().toLocaleString(),
-      status: "unread"
-    });
-    localStorage.setItem("vg_enquiries", JSON.stringify(enquiries));
+    setStatus("loading");
+    try {
+      await addDoc(collection(db, "enquiry"), {
+        name: formData.name.trim(),
+        phone: formData.phone,
+        email: formData.email.trim(),
+        requirement: formData.requirement,
+        message: formData.message.trim(),
+        date: new Date().toISOString(),
+        status: "unread"
+      });
 
-    // Simulate API call
-    setStatus("success");
-    setFormData({
-      name: "",
-      phone: "",
-      email: "",
-      requirement: "",
-      message: "",
-    });
-    setTimeout(() => setStatus(""), 4000);
+      setStatus("success");
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        requirement: "",
+        message: "",
+      });
+      setTimeout(() => setStatus(""), 4000);
+    } catch (error) {
+      console.error("Error submitting enquiry:", error);
+      setErrorMessage("Failed to send request. Please try again.");
+      setStatus("error");
+    }
   };
 
   return (

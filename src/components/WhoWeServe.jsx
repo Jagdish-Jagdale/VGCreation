@@ -1,33 +1,72 @@
 import { useState, useEffect } from "react";
 import { db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 
 export default function WhoWeServe() {
-  const [meta, setMeta] = useState({
-    title: "Trusted by Industry Leaders",
-    description: "From architects to industrialists — they all rely on Vision Glass."
+  const [meta, setMeta] = useState(() => {
+    const saved = localStorage.getItem("vg_majorclients_meta");
+    return saved ? JSON.parse(saved) : null;
   });
-  const [displayClients, setDisplayClients] = useState([]);
+  const [displayClients, setDisplayClients] = useState(() => {
+    const saved = localStorage.getItem("vg_majorclients_list");
+    return saved ? JSON.parse(saved) : null;
+  });
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const docRef = doc(db, "home", "majorclients");
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          if (data.meta) setMeta(data.meta);
-          if (data.list) setDisplayClients(data.list);
-        } else {
-          // If no firestore document exists, show empty list to prevent default dummy data
-          setDisplayClients([]);
+    const unsubscribe = onSnapshot(doc(db, "home", "majorclients"), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.meta) {
+          setMeta(data.meta);
+          localStorage.setItem("vg_majorclients_meta", JSON.stringify(data.meta));
         }
-      } catch (error) {
-        console.error("Error fetching WhoWeServe data:", error);
+        if (data.list) {
+          setDisplayClients(data.list);
+          localStorage.setItem("vg_majorclients_list", JSON.stringify(data.list));
+        }
+      } else {
+        const defaultMeta = {
+          title: "Trusted by Industry Leaders",
+          description: "From architects to industrialists — they all rely on Vision Glass."
+        };
+        setMeta(defaultMeta);
+        localStorage.setItem("vg_majorclients_meta", JSON.stringify(defaultMeta));
+        setDisplayClients([]);
+        localStorage.setItem("vg_majorclients_list", JSON.stringify([]));
       }
-    };
-    fetchData();
+    }, (error) => {
+      console.error("Error fetching WhoWeServe data:", error);
+      setDisplayClients([]);
+    });
+
+    return () => unsubscribe();
   }, []);
+
+  if (!meta || displayClients === null) {
+    return (
+      <section id="whoweserve" className="py-16 bg-white border-b border-slate-100">
+        <div className="max-w-6xl mx-auto px-6 animate-pulse">
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <div className="h-px w-8 bg-gray-300" />
+            <div className="h-4 w-24 bg-gray-300 rounded" />
+            <div className="h-px w-8 bg-gray-300" />
+          </div>
+          <div className="h-8 w-64 bg-gray-300 rounded mx-auto mb-3" />
+          <div className="h-4 w-96 bg-gray-300 rounded mx-auto mb-12" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm h-72 flex flex-col">
+                <div className="h-56 bg-gray-300 w-full" />
+                <div className="p-5 flex-1 bg-white border-t border-gray-50">
+                  <div className="h-4 bg-gray-300 rounded w-full" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   if (displayClients.length === 0) return null;
 

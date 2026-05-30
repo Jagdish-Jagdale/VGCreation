@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { db } from "../firebase";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, doc, onSnapshot } from "firebase/firestore";
 import windowsImg from "../assets/Aluminium & UPVC Windows.jpg";
 import mirrorsImg from "../assets/Decorative & LED Mirrors.jpg";
 import facadeImg from "../assets/Structural & Semi-Structural Facade Work.jpg";
@@ -66,42 +66,82 @@ const services = [
 ];
 
 export default function WhatWeDo() {
-  const [servicesList, setServicesList] = useState([]);
-  const [meta, setMeta] = useState({
-    title: "Our Services",
-    description: "End-to-end glass solutions, crafted with precision and delivered with care across Pune's skyline."
+  const [servicesList, setServicesList] = useState(() => {
+    const saved = localStorage.getItem("vg_servicesList");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [meta, setMeta] = useState(() => {
+    const saved = localStorage.getItem("vg_whatwedo_meta");
+    return saved ? JSON.parse(saved) : null;
   });
 
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "services"));
-        if (!querySnapshot.empty) {
-          const list = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          const featuredList = list.filter(s => s.featured === true);
-          setServicesList(featuredList.length > 0 ? featuredList : list.slice(0, 6)); // Fallback to some services if none featured
-        } else {
-          setServicesList([]);
-        }
-      } catch (error) {
-        console.error("Error fetching services:", error);
+    const unsubServices = onSnapshot(collection(db, "services"), (querySnapshot) => {
+      if (!querySnapshot.empty) {
+        const list = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const featuredList = list.filter(s => s.featured === true);
+        const finalServices = featuredList.length > 0 ? featuredList : list.slice(0, 6);
+        setServicesList(finalServices);
+        localStorage.setItem("vg_servicesList", JSON.stringify(finalServices));
+      } else {
+        setServicesList([]);
       }
-    };
-    fetchServices();
+    }, (error) => {
+      console.error("Error fetching services:", error);
+      setServicesList([]);
+    });
 
-    const fetchMeta = async () => {
-      try {
-        const docRef = doc(db, "home", "whatwedo");
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setMeta(docSnap.data());
-        }
-      } catch (error) {
-        console.error("Error fetching WhatWeDo meta:", error);
+    const unsubMeta = onSnapshot(doc(db, "home", "whatwedo"), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setMeta(data);
+        localStorage.setItem("vg_whatwedo_meta", JSON.stringify(data));
+      } else {
+        setMeta({
+          title: "Our Services",
+          description: "End-to-end glass solutions, crafted with precision and delivered with care across Pune's skyline."
+        });
       }
+    }, (error) => {
+      console.error("Error fetching WhatWeDo meta:", error);
+    });
+
+    return () => {
+      unsubServices();
+      unsubMeta();
     };
-    fetchMeta();
   }, []);
+
+  if (!servicesList || !meta) {
+    return (
+      <section id="services" className="py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6 animate-pulse">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="h-px w-10 bg-gray-300" />
+            <div className="h-4 w-24 bg-gray-300 rounded" />
+            <div className="h-px w-10 bg-gray-300" />
+          </div>
+          <div className="h-8 w-64 bg-gray-300 rounded mx-auto mb-3" />
+          <div className="h-4 w-96 bg-gray-300 rounded mx-auto mb-12" />
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 h-80 flex flex-col">
+                <div className="h-48 bg-gray-300 w-full" />
+                <div className="p-5 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="h-4 bg-gray-300 rounded w-full mb-2" />
+                    <div className="h-4 bg-gray-300 rounded w-4/5" />
+                  </div>
+                  <div className="h-4 bg-gray-300 rounded w-24" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="services" className="py-20 bg-gray-50">
