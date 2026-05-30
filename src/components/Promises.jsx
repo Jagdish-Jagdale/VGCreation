@@ -20,10 +20,10 @@ const promiseIcons = [
 export default function Promises() {
   const [promisesList, setPromisesList] = useState([]);
   const [meta, setMeta] = useState({
-    title1: "Complete glass solutions under one roof —",
-    title2: "quality guaranteed.",
-    description: "Professional finishing on every project, large or small. We deliver exceptional value through specialized craftsmanship, reliable delivery, and premium materials designed to elevate your architectural spaces.",
-    buttonLabel: "Start Your Project"
+    title1: "",
+    title2: "",
+    description: "",
+    buttonLabel: ""
   });
 
   useEffect(() => {

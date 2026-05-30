@@ -98,8 +98,8 @@ export default function WhatWeDo() {
         localStorage.setItem("vg_whatwedo_meta", JSON.stringify(data));
       } else {
         setMeta({
-          title: "Our Services",
-          description: "End-to-end glass solutions, crafted with precision and delivered with care across Pune's skyline."
+          title: "",
+          description: ""
         });
       }
     }, (error) => {

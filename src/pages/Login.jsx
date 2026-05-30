@@ -65,7 +65,7 @@ export default function Login() {
         });
 
         triggerToast("Registration successful! Redirecting...", "success");
-        localStorage.setItem("isAdmin", "true");
+        sessionStorage.setItem("isAdmin", "true");
         setTimeout(() => {
           window.history.pushState(null, "", "/admin");
           window.dispatchEvent(new PopStateEvent("popstate"));
@@ -76,7 +76,7 @@ export default function Login() {
         // Hardcoded admin check (fallback)
         if (email === "admin@gmail.com" && password === "Admin@123") {
           triggerToast("Login successful! Redirecting...", "success");
-          localStorage.setItem("isAdmin", "true");
+          sessionStorage.setItem("isAdmin", "true");
           setTimeout(() => {
             window.history.pushState(null, "", "/admin");
             window.dispatchEvent(new PopStateEvent("popstate"));
@@ -87,7 +87,7 @@ export default function Login() {
         // Firebase Auth login
         await signInWithEmailAndPassword(auth, email, password);
         triggerToast("Login successful! Redirecting...", "success");
-        localStorage.setItem("isAdmin", "true");
+        sessionStorage.setItem("isAdmin", "true");
         setTimeout(() => {
           window.history.pushState(null, "", "/admin");
           window.dispatchEvent(new PopStateEvent("popstate"));

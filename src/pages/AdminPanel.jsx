@@ -32,7 +32,7 @@ export default function AdminPanel() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("isAdminAuthenticated");
+    sessionStorage.removeItem("isAdmin");
     window.location.href = "/admin/login";
   };
 

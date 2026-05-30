@@ -1,19 +1,6 @@
 import { useState, useEffect } from "react";
 
-const defaultItems = [
-  "Glass Partitions",
-  "Structural Facade",
-  "Aluminium Windows",
-  "LED Mirrors",
-  "UPVC Windows",
-  "Glass Glazing",
-  "Interior Solutions",
-  "Curtain Wall",
-  "PVC Doors",
-  "Decorative Glass",
-  "Acid Etching",
-  "Bend Glass",
-];
+const defaultItems = [];
 
 export default function ServicesTicker() {
   const [tickerItems, setTickerItems] = useState(defaultItems);

@@ -26,8 +26,8 @@ export default function WhoWeServe() {
         }
       } else {
         const defaultMeta = {
-          title: "Trusted by Industry Leaders",
-          description: "From architects to industrialists — they all rely on Vision Glass."
+          title: "",
+          description: ""
         };
         setMeta(defaultMeta);
         localStorage.setItem("vg_majorclients_meta", JSON.stringify(defaultMeta));

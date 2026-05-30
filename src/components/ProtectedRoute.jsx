@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
-export default function ProtectedRoute({ children, requireAuth = true, redirectTo }) {
-  const isAdmin = localStorage.getItem("isAdmin") === "true";
+export default function ProtectedRoute({ children, requireAuth = true, redirectTo = "/admin/login" }) {
+  const isAdmin = sessionStorage.getItem("isAdmin") === "true";
 
   useEffect(() => {
     if (requireAuth && !isAdmin) {
