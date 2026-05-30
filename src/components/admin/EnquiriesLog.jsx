@@ -1,17 +1,21 @@
 import { useState, useEffect } from "react";
 import { db } from "../../firebase";
 import { collection, onSnapshot, doc, updateDoc, deleteDoc, orderBy, query } from "firebase/firestore";
+import AdminLoader from "./AdminLoader";
 
 export default function EnquiriesLog({ triggerToast }) {
   const [enquiries, setEnquiries] = useState([]);
+  const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
     const q = query(collection(db, "enquiry"), orderBy("date", "desc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setEnquiries(list);
+      setIsFetching(false);
     }, (error) => {
       console.error("Error fetching enquiries:", error);
+      setIsFetching(false);
     });
     return () => unsubscribe();
   }, []);
@@ -51,7 +55,9 @@ export default function EnquiriesLog({ triggerToast }) {
         </div>
       </div>
 
-      {enquiries.length === 0 ? (
+      {isFetching ? (
+        <AdminLoader />
+      ) : enquiries.length === 0 ? (
         <p className="text-sm text-slate-400 py-12 text-center font-medium">No quotation enquiries in the database.</p>
       ) : (
         <div className="overflow-x-auto">

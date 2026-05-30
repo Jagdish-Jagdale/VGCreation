@@ -12,8 +12,14 @@ import EnquiriesLog from "../components/admin/EnquiriesLog";
 export default function AdminPanel() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("home");
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem("vg_admin_active_tab") || "home";
+  });
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
+
+  useEffect(() => {
+    localStorage.setItem("vg_admin_active_tab", activeTab);
+  }, [activeTab]);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const triggerToast = (message, type = "success") => {

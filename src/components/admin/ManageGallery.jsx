@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { db, storage } from "../../firebase";
 import { collection, doc, getDocs, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import AdminLoader from "./AdminLoader";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 
 export default function ManageGallery({ triggerToast }) {
@@ -12,11 +13,16 @@ export default function ManageGallery({ triggerToast }) {
   const [imageMode, setImageMode] = useState("link");
   const [imageFile, setImageFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const [deleteModal, setDeleteModal] = useState({ show: false, id: null, itemName: "", serviceId: "" });
 
   useEffect(() => {
-    fetchServices();
-    fetchGallery();
+    const loadData = async () => {
+      setIsFetching(true);
+      await Promise.all([fetchServices(), fetchGallery()]);
+      setIsFetching(false);
+    };
+    loadData();
   }, []);
 
   const fetchServices = async () => {
@@ -171,8 +177,11 @@ export default function ManageGallery({ triggerToast }) {
       </div>
 
       {/* Gallery List Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
-        {gallery.map((item) => (
+      {isFetching ? (
+        <AdminLoader />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
+          {gallery.map((item) => (
           <div key={item.id} className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden flex flex-col justify-between group relative">
             <div className="relative h-40 overflow-hidden">
               <img
@@ -201,6 +210,7 @@ export default function ManageGallery({ triggerToast }) {
           </div>
         )}
       </div>
+      )}
 
       {/* Gallery Image Add Modal */}
       {galleryModal.show && (

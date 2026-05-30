@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { db, storage } from "../../firebase";
 import { collection, doc, getDocs, setDoc, deleteDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import AdminLoader from "./AdminLoader";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 
 export default function ManageServices({ triggerToast }) {
@@ -11,6 +12,7 @@ export default function ManageServices({ triggerToast }) {
   const [imageFile, setImageFile] = useState(null);
   const [imageMode, setImageMode] = useState("link");
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const [deleteModal, setDeleteModal] = useState({ show: false, id: null, itemName: "" });
 
   // Search & Filter state
@@ -22,6 +24,7 @@ export default function ManageServices({ triggerToast }) {
   }, []);
 
   const fetchServices = async () => {
+    setIsFetching(true);
     try {
       const querySnapshot = await getDocs(collection(db, "services"));
       const servicesList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -30,6 +33,8 @@ export default function ManageServices({ triggerToast }) {
     } catch (error) {
       console.error("Error fetching services:", error);
       triggerToast("Failed to fetch services from database", "error");
+    } finally {
+      setIsFetching(false);
     }
   };
 
@@ -210,7 +215,9 @@ export default function ManageServices({ triggerToast }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {filteredServices.length === 0 ? (
+            {isFetching ? (
+              <AdminLoader asTableRow={true} colSpan={6} />
+            ) : filteredServices.length === 0 ? (
               <tr>
                 <td colSpan="6" className="py-8 text-center text-slate-400 text-sm font-medium">No services found.</td>
               </tr>

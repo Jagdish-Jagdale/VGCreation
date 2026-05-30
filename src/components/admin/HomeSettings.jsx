@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { db, storage } from "../../firebase";
 import { doc, getDoc, setDoc, collection, getDocs } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import AdminLoader from "./AdminLoader";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 
 const defaultHome = {
@@ -22,6 +23,7 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
   const [isSaving, setIsSaving] = useState(false);
   const [image1Mode, setImage1Mode] = useState("link");
   const [image2Mode, setImage2Mode] = useState("link");
+  const [isFetching, setIsFetching] = useState(true);
 
 
 
@@ -147,6 +149,8 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
       } catch (error) {
         console.error("Error fetching home settings:", error);
         triggerToast("Failed to load settings from database", "error");
+      } finally {
+        setIsFetching(false);
       }
     };
     fetchData();
@@ -427,6 +431,10 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
       setReferClientForm({ title: "", subtitle: "", buttonLabel: "" });
     }
   };
+
+  if (isFetching) {
+    return <AdminLoader />;
+  }
 
   return (
     <div className="space-y-8">

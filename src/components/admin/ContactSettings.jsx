@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { db } from "../../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import AdminLoader from "./AdminLoader";
 
 const defaultContact = {
   phone1: "+91 99219 17083",
@@ -15,6 +16,7 @@ const defaultContact = {
 export default function ContactSettings({ triggerToast }) {
   const [contactData, setContactData] = useState(defaultContact);
   const [isSaving, setIsSaving] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
     const fetchContact = async () => {
@@ -33,6 +35,8 @@ export default function ContactSettings({ triggerToast }) {
         }
       } catch (error) {
         console.error("Failed to fetch contact settings:", error);
+      } finally {
+        setIsFetching(false);
       }
     };
     fetchContact();
@@ -53,6 +57,10 @@ export default function ContactSettings({ triggerToast }) {
       setIsSaving(false);
     }
   };
+
+  if (isFetching) {
+    return <AdminLoader />;
+  }
 
   return (
     <div className="space-y-8">

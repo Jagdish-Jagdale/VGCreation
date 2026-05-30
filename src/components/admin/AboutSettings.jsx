@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { db } from "../../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import AdminLoader from "./AdminLoader";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 
 export default function AboutSettings({ triggerToast }) {
   const [isSaving, setIsSaving] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   // 1. Header
   const [headerMeta, setHeaderMeta] = useState({ title: "About Us", subtitle: "Discover our journey and values" });
 
@@ -75,6 +77,8 @@ export default function AboutSettings({ triggerToast }) {
       } catch (error) {
         console.error("Error fetching about settings:", error);
         triggerToast("Failed to load settings from database", "error");
+      } finally {
+        setIsFetching(false);
       }
     };
     fetchData();
@@ -173,6 +177,10 @@ export default function AboutSettings({ triggerToast }) {
       reader.readAsDataURL(file);
     }
   };
+
+  if (isFetching) {
+    return <AdminLoader />;
+  }
 
   return (
     <div className="space-y-8">
