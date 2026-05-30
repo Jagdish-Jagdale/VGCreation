@@ -41,11 +41,11 @@ export default function ContactPage() {
   const [status, setStatus] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const defaultMapsUrl = "https://maps.google.com/?q=Vision+Glass+Creation+Plot+No.+595+Ganganagar+Nigdi+Pimpri-Chinchwad+411044";
+  const defaultMapsUrl = "";
   const mapsSearchUrl = contactInfo.mapsUrl || defaultMapsUrl;
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(mapsSearchUrl)}&color=051120&bgcolor=ffffff`;
+  const qrCodeUrl = mapsSearchUrl ? `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(mapsSearchUrl)}&color=051120&bgcolor=ffffff` : "";
   
-  const whatsappNumber = contactInfo.whatsapp ? contactInfo.whatsapp.replace(/\D/g, "") : "919921917083";
+  const whatsappNumber = contactInfo.whatsapp ? contactInfo.whatsapp.replace(/\D/g, "") : "";
 
   const handleChange = (e) => {
     const { name, value } = e.target;

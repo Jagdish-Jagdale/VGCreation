@@ -1,9 +1,51 @@
+import { useState, useEffect } from "react";
 import logo from "../assets/vision_glass_creation_logo.png";
+import { db } from "../firebase";
+import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 
 export default function Footer() {
-  const qrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://maps.google.com/?q=Vision+Glass+Creation+Plot+No.+595+Ganganagar+Nigdi+Pimpri-Chinchwad+411044&color=ffffff&bgcolor=0c1c30";
-  const mapsSearchUrl = "https://maps.google.com/?q=Vision+Glass+Creation+Plot+No.+595+Ganganagar+Nigdi+Pimpri-Chinchwad+411044";
-  const whatsappUrl = "https://wa.me/919921917083";
+  const [featuredServices, setFeaturedServices] = useState([]);
+  const [contactDetails, setContactDetails] = useState(null);
+
+  useEffect(() => {
+    const fetchFeaturedServices = async () => {
+      try {
+        const q = query(collection(db, "services"), where("featured", "==", true));
+        const snap = await getDocs(q);
+        const services = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setFeaturedServices(services);
+      } catch (error) {
+        console.error("Error fetching featured services:", error);
+      }
+    };
+    
+    const fetchContactDetails = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, "settings", "contact"));
+        if (docSnap.exists()) {
+          setContactDetails(docSnap.data());
+        }
+      } catch (error) {
+        console.error("Error fetching contact details:", error);
+      }
+    };
+
+    fetchFeaturedServices();
+    fetchContactDetails();
+  }, []);
+
+  const contact = contactDetails || {
+    phone1: "",
+    phone2: "",
+    email: "",
+    address: "",
+    whatsapp: "",
+    mapsUrl: ""
+  };
+
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(contact.mapsUrl)}&color=ffffff&bgcolor=0c1c30`;
+  const mapsSearchUrl = contact.mapsUrl;
+  const whatsappUrl = `https://wa.me/${contact.whatsapp.replace(/[^0-9]/g, '')}`;
 
   return (
     <>
@@ -89,30 +131,17 @@ export default function Footer() {
                 Our Services
               </h4>
               <ul className="flex flex-col gap-2.5 text-sm">
-                <li>
-                  <a href="#services" className="hover:text-sky-400 transition-colors duration-200">Glass Partitions</a>
-                </li>
-                <li>
-                  <a href="#services" className="hover:text-sky-400 transition-colors duration-200">Aluminium & UPVC Windows</a>
-                </li>
-                <li>
-                  <a href="#services" className="hover:text-sky-400 transition-colors duration-200">Structural Facade</a>
-                </li>
-                <li>
-                  <a href="#services" className="hover:text-sky-400 transition-colors duration-200">Glass Glazing</a>
-                </li>
-                <li>
-                  <a href="#services" className="hover:text-sky-400 transition-colors duration-200">Interior Solutions</a>
-                </li>
-                <li>
-                  <a href="#services" className="hover:text-sky-400 transition-colors duration-200">Decorative Mirrors</a>
-                </li>
-                <li>
-                  <a href="#services" className="hover:text-sky-400 transition-colors duration-200">LED Mirror Work</a>
-                </li>
-                <li>
-                  <a href="#services" className="hover:text-sky-400 transition-colors duration-200">PVC Fiber Doors</a>
-                </li>
+                {featuredServices.length > 0 ? (
+                  featuredServices.map((service) => (
+                    <li key={service.id}>
+                      <a href="/services" className="hover:text-sky-400 transition-colors duration-200">
+                        {service.name || service.title}
+                      </a>
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-gray-500 italic text-xs">Loading services...</li>
+                )}
               </ul>
             </div>
 
@@ -122,30 +151,32 @@ export default function Footer() {
                 Contact
               </h4>
               <div className="flex flex-col gap-3 text-sm">
-                <a href="tel:+919921917083" className="flex items-center gap-2.5 hover:text-white transition-colors">
+                <a href={`tel:${contact.phone1.replace(/[^0-9+]/g, '')}`} className="flex items-center gap-2.5 hover:text-white transition-colors">
                   <svg className="w-4 h-4 text-[#1481b8] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
-                  +91 99219 17083
+                  {contact.phone1}
                 </a>
-                <a href="tel:+917840917083" className="flex items-center gap-2.5 hover:text-white transition-colors">
-                  <svg className="w-4 h-4 text-[#1481b8] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                  </svg>
-                  +91 78409 17083
-                </a>
-                <a href="mailto:visionglasscreation1@gmail.com" className="flex items-center gap-2.5 hover:text-white transition-colors break-all">
+                {contact.phone2 && (
+                  <a href={`tel:${contact.phone2.replace(/[^0-9+]/g, '')}`} className="flex items-center gap-2.5 hover:text-white transition-colors">
+                    <svg className="w-4 h-4 text-[#1481b8] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    {contact.phone2}
+                  </a>
+                )}
+                <a href={`mailto:${contact.email}`} className="flex items-center gap-2.5 hover:text-white transition-colors break-all">
                   <svg className="w-4 h-4 text-[#1481b8] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  visionglasscreation1@gmail.com
+                  {contact.email}
                 </a>
                 <a href={mapsSearchUrl} target="_blank" rel="noopener noreferrer" className="flex items-start gap-2.5 hover:text-white transition-colors">
                   <svg className="w-4 h-4 text-[#1481b8] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  <span>Plot No. 595, Ganganagar, Nigdi, Pimpri-Chinchwad 411044</span>
+                  <span>{contact.address}</span>
                 </a>
               </div>
 

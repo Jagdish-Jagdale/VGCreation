@@ -68,6 +68,7 @@ const services = [
 export default function Services() {
   const [servicesList, setServicesList] = useState([]);
   const [visibleCount, setVisibleCount] = useState(8);
+  const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
     document.title = "Services | Vision Glass Creation";
@@ -88,6 +89,8 @@ export default function Services() {
         }
       } catch (error) {
         console.error("Error fetching services:", error);
+      } finally {
+        setIsFetching(false);
       }
     };
     fetchServices();
@@ -133,14 +136,30 @@ export default function Services() {
       {/* Services Grid - 4 columns on desktop with uniform height cards, gap-8 */}
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {servicesList.slice(0, visibleCount).map((service, index) => (
-            <div
-              key={service.id}
-              className={`bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group ${
-                index >= 8 ? "animate-fade-in-up" : ""
-              }`}
-              style={index >= 8 ? { animationDelay: `${(index - 8) * 100}ms`, opacity: 0 } : {}}
-            >
+          {isFetching ? (
+            Array.from({ length: 8 }).map((_, index) => (
+              <div key={index} className="bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col h-full animate-pulse">
+                <div className="h-56 bg-slate-200/60 rounded-t-2xl"></div>
+                <div className="p-5 flex flex-col flex-grow">
+                  <div className="h-5 bg-slate-200/60 rounded-md w-3/4 mb-4"></div>
+                  <div className="h-3 bg-slate-200/60 rounded-sm w-full mb-2"></div>
+                  <div className="h-3 bg-slate-200/60 rounded-sm w-5/6 mb-4 flex-grow"></div>
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+                    <div className="h-3.5 bg-slate-200/60 rounded w-24"></div>
+                    <div className="h-3 bg-slate-200/60 rounded w-20"></div>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            servicesList.slice(0, visibleCount).map((service, index) => (
+              <div
+                key={service.id}
+                className={`bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group ${
+                  index >= 8 ? "animate-fade-in-up" : ""
+                }`}
+                style={index >= 8 ? { animationDelay: `${(index - 8) * 100}ms`, opacity: 0 } : {}}
+              >
               {/* Card Header area */}
               <div className="relative h-56 overflow-hidden flex items-center justify-center border-b border-slate-100">
                 <img
@@ -188,7 +207,8 @@ export default function Services() {
                 </div>
               </div>
             </div>
-          ))}
+          ))
+          )}
         </div>
 
         {/* Load More Button */}

@@ -1,8 +1,26 @@
 import { useState, useEffect } from "react";
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function WhatsAppButton() {
   const [showLabel, setShowLabel] = useState(false);
-  const whatsappUrl = "https://wa.me/919921917083?text=Hello,%20I%20have%20an%20inquiry%20regarding%20your%20services.";
+  const [whatsappNumber, setWhatsappNumber] = useState("");
+  
+  useEffect(() => {
+    const fetchWhatsapp = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, "settings", "contact"));
+        if (docSnap.exists() && docSnap.data().whatsapp) {
+          setWhatsappNumber(docSnap.data().whatsapp.replace(/[^0-9]/g, ''));
+        }
+      } catch (error) {
+        console.error("Error fetching whatsapp number:", error);
+      }
+    };
+    fetchWhatsapp();
+  }, []);
+
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hello,%20I%20have%20an%20inquiry%20regarding%20your%20services.`;
 
   useEffect(() => {
     // Initial show after 3 seconds, then hide after 5 seconds
@@ -28,6 +46,8 @@ export default function WhatsAppButton() {
       clearInterval(interval);
     };
   }, []);
+
+  if (!whatsappNumber) return null;
 
   return (
     <div className="fixed bottom-6 right-6 z-[999] flex items-center gap-3">
