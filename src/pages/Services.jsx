@@ -15,7 +15,7 @@ export default function Services() {
   const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
-    document.title = "Services | Vision Glass Creationtt";
+    document.title = "Services | Vision Glass Creation";
     const fetchServices = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "services"));
