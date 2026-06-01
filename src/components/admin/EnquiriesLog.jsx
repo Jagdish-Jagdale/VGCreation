@@ -25,7 +25,7 @@ export default function EnquiriesLog({ triggerToast }) {
       await updateDoc(doc(db, "enquiry", id), {
         status: currentStatus === "unread" ? "read" : "unread"
       });
-      triggerToast("Enquiry status updated!");
+      triggerToast("Enquiry status updatedii!");
     } catch (error) {
       console.error("Error updating status:", error);
       triggerToast("Failed to update status", "error");
