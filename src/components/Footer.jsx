@@ -18,7 +18,7 @@ export default function Footer() {
         console.error("Error fetching featured services:", error);
       }
     };
-    
+
     const fetchContactDetails = async () => {
       try {
         const docSnap = await getDoc(doc(db, "settings", "contact"));
@@ -71,7 +71,7 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Column 2: Scan to Visit */}
+            {/* Column 2: Scan to Visitjj */}
             <div className="lg:col-span-2 flex flex-col gap-4 items-start">
               <h4 className="text-sm font-extrabold text-white tracking-widest uppercase">
                 Scan to Visit
