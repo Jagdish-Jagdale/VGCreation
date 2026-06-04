@@ -64,7 +64,7 @@ export default function ContactSettings({ triggerToast }) {
 
   return (
     <div className="space-y-8">
-      {/* Page Headercc */}
+      {/* Page Header */}
       <div className="flex items-center justify-between mb-8 pb-5 border-b border-violet-100/50">
         <div>
           <h2 className="text-xl font-extrabold text-slate-800 tracking-tight">Contact Settings</h2>
