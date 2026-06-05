@@ -71,7 +71,7 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Column 2: Scan to Visituu */}
+            {/* Column 2: Scan to Visit */}
             <div className="lg:col-span-2 flex flex-col gap-4 items-start">
               <h4 className="text-sm font-extrabold text-white tracking-widest uppercase">
                 Scan to Visit
