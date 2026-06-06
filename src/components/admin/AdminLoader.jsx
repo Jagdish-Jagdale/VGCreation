@@ -21,7 +21,7 @@ export default function AdminLoader({ asTableRow, colSpan = 6 }) {
   }
 
   return (
-    <div className="flex justify-center items-center h-[calc(100vh-250px)] w-full">rr
+    <div className="flex justify-center items-center h-[calc(100vh-250px)] w-full">
       {loaderContent}
     </div>
   );
