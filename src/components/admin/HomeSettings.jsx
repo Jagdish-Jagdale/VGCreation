@@ -70,7 +70,7 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Hero SectionWW
+        // Hero Section
         const heroDoc = await getDoc(doc(db, "home", "herosection"));
         if (heroDoc.exists()) {
           setHomeData({ ...defaultHome, ...heroDoc.data() });
