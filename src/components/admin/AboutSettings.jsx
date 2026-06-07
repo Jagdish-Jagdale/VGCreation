@@ -67,7 +67,7 @@ export default function AboutSettings({ triggerToast }) {
           if (data.list) setPointsList(data.list);
         }
 
-        // Partners
+        // Partnersll
         const partnersDoc = await getDoc(doc(db, "about", "partners"));
         if (partnersDoc.exists()) {
           const data = partnersDoc.data();
@@ -127,7 +127,7 @@ export default function AboutSettings({ triggerToast }) {
   const confirmDelete = () => {
     const { type, id } = deleteModal;
     if (!id) return;
-    
+
     if (type === "whyUsCards") {
       setWhyUsCards(prev => prev.filter(item => item.id !== id));
     } else if (type === "pointsList") {
@@ -190,8 +190,8 @@ export default function AboutSettings({ triggerToast }) {
           <h2 className="text-xl font-extrabold text-slate-800 tracking-tight">About Page Settings</h2>
           <p className="text-sm text-slate-400 font-medium mt-1">Configure all sections of the About Page here.</p>
         </div>
-        <button 
-          onClick={handleAboutSave} 
+        <button
+          onClick={handleAboutSave}
           disabled={isSaving}
           className="bg-[#6340b2] hover:bg-[#5231a3] text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-violet-500/10 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
@@ -423,16 +423,16 @@ export default function AboutSettings({ triggerToast }) {
                 <label className="block text-xs font-bold text-slate-600 uppercase mb-2">Subpoints</label>
                 {pointForm.subpoints.map((sp, idx) => (
                   <div key={idx} className="flex gap-2 mb-2">
-                    <input 
-                      type="text" 
-                      value={sp} 
+                    <input
+                      type="text"
+                      value={sp}
                       onChange={(e) => {
                         const newSubpoints = [...pointForm.subpoints];
                         newSubpoints[idx] = e.target.value;
                         setPointForm({ ...pointForm, subpoints: newSubpoints });
                       }}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2]" 
-                      required 
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#6340b2]"
+                      required
                     />
                     {pointForm.subpoints.length > 1 && (
                       <button type="button" onClick={() => {
