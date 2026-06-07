@@ -67,7 +67,7 @@ export default function AboutSettings({ triggerToast }) {
           if (data.list) setPointsList(data.list);
         }
 
-        // Partnersll
+        // Partners
         const partnersDoc = await getDoc(doc(db, "about", "partners"));
         if (partnersDoc.exists()) {
           const data = partnersDoc.data();
