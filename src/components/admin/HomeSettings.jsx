@@ -70,7 +70,7 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Hero Section
+        // Hero SectionWW
         const heroDoc = await getDoc(doc(db, "home", "herosection"));
         if (heroDoc.exists()) {
           setHomeData({ ...defaultHome, ...heroDoc.data() });
@@ -173,7 +173,7 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
       localStorage.setItem("vg_majorclients_meta", JSON.stringify(majorClientsMeta));
       localStorage.setItem("vg_promises_meta", JSON.stringify(promisesMeta));
       localStorage.setItem("vg_referclient_meta", JSON.stringify(referClientMeta));
-      
+
       triggerToast("All Homepage settings saved to database successfully!");
     } catch (error) {
       console.error("Error saving to database:", error);
@@ -190,7 +190,7 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
         triggerToast("Image is too large (max 1.5MB). Please compress it first.", "error");
         return;
       }
-      
+
       setIsUploading(true);
       triggerToast("Uploading image...");
       try {
@@ -199,7 +199,7 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
         const storageRef = ref(storage, fileName);
         await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
-        
+
         if (index === 1) {
           setHomeData(prev => ({ ...prev, heroImage1: url }));
         } else {
@@ -293,7 +293,7 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
         const storageRef = ref(storage, fileName);
         await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
-        
+
         setMajorClientForm(prev => ({ ...prev, image: url }));
         triggerToast("Image loaded successfully!");
       } catch (error) {
@@ -460,7 +460,7 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
           ) : isUploading ? "Uploading..." : "Save Changes"}
         </button>
       </div>
-      
+
       {/* Homepage Hero Settings */}
       <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-violet-100/60 shadow-sm p-6">
         <form id="home-form" onSubmit={handleHomeSave} className="space-y-5">
@@ -665,7 +665,7 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
             Add Promise
           </button>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
           <div>
             <label className="block text-xs font-bold text-slate-600 uppercase mb-2">Heading Title 1</label>
@@ -812,7 +812,7 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
           </div>
         )}
       </div>
-      
+
       {/* Modals */}
 
       {referClientModal.show && createPortal(
@@ -915,7 +915,7 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
         </div>,
         document.body
       )}
-      
+
       {/* Service Modal removed, managed in ManageServices.jsx */}
 
       <DeleteConfirmModal
