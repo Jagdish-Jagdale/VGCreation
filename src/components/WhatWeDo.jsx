@@ -33,7 +33,7 @@ const services = [
   {
     id: 3,
     category: "OFFICE",
-    title: "Officeyy",
+    title: "Office",
     description: "Custom glass workstations, cabins, doors, and functional spaces for modern offices.",
     features: ["WORKSTATIONS", "CABINS", "GLASS DOORS"],
     image: windowsImg,
