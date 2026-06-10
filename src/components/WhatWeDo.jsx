@@ -16,7 +16,7 @@ const services = [
     features: ["RESIDENTIAL", "INTERIORS", "CUSTOM DESIGN"],
     image: interiorImg,
     icon: (
-      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg>
+      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10" /></svg>
     ),
   },
   {
@@ -27,18 +27,18 @@ const services = [
     features: ["PARTITIONS", "MEETING ROOMS", "ACOUSTIC"],
     image: facadeImg,
     icon: (
-      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
     ),
   },
   {
     id: 3,
     category: "OFFICE",
-    title: "Office",
+    title: "Officeyy",
     description: "Custom glass workstations, cabins, doors, and functional spaces for modern offices.",
     features: ["WORKSTATIONS", "CABINS", "GLASS DOORS"],
     image: windowsImg,
     icon: (
-      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
     ),
   },
   {
@@ -49,7 +49,7 @@ const services = [
     features: ["STRUCTURAL", "SEMI-STRUCTURAL", "CURTAIN WALL"],
     image: glazingImg,
     icon: (
-      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 14a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1v-5zm10 0a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1h-4a1 1 0 01-1-1v-5z"/></svg>
+      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 14a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1v-5zm10 0a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1h-4a1 1 0 01-1-1v-5z" /></svg>
     ),
   },
   {
@@ -60,7 +60,7 @@ const services = [
     features: ["LARGE SCALE", "GLAZING", "ENERGY EFFICIENT"],
     image: mirrorsImg,
     icon: (
-      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/></svg>
+      <svg className="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18" /></svg>
     ),
   },
 ];
@@ -123,7 +123,7 @@ export default function WhatWeDo() {
           </div>
           <div className="h-8 w-64 bg-gray-300 rounded mx-auto mb-3" />
           <div className="h-4 w-96 bg-gray-300 rounded mx-auto mb-12" />
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3].map(i => (
               <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 h-80 flex flex-col">
@@ -180,7 +180,7 @@ export default function WhatWeDo() {
                 />
                 {/* Dark gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/10"></div>
-                
+
 
 
                 {/* Title overlay at bottom */}
@@ -216,11 +216,11 @@ export default function WhatWeDo() {
               className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-white border border-slate-200 text-slate-700 hover:text-[#1481b8] hover:border-[#1481b8]/50 rounded-full text-sm font-semibold transition-all duration-200 hover:shadow-sm group"
             >
               View All Services
-              <svg 
-                className="w-4 h-4 transform transition-transform group-hover:translate-x-0.5" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2.5" 
+              <svg
+                className="w-4 h-4 transform transition-transform group-hover:translate-x-0.5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
                 viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
