@@ -11,7 +11,7 @@ export default function Navbar({ currentPath }) {
     if (path === "/contact") return "contact";
     return "home";
   });
-  const clickLock = useRef(false); // prevents observer overriding a clickoo
+  const clickLock = useRef(false); // prevents observer overriding a click
   const [phone, setPhone] = useState("+91 99219 17083");
 
   useEffect(() => {
@@ -118,8 +118,8 @@ export default function Navbar({ currentPath }) {
           <a
             href="/contact"
             className={`text-sm font-semibold px-5 py-2 rounded-full transition-all duration-200 ${activeSection === "contact"
-                ? "bg-[#116a9a] text-white ring-2 ring-offset-2 ring-[#1481b8]/50 shadow-sm"
-                : "bg-[#1481b8] text-white hover:bg-[#116a9a]"
+              ? "bg-[#116a9a] text-white ring-2 ring-offset-2 ring-[#1481b8]/50 shadow-sm"
+              : "bg-[#1481b8] text-white hover:bg-[#116a9a]"
               }`}
             onClick={() => handleNavClick("contact")}
           >
@@ -180,8 +180,8 @@ export default function Navbar({ currentPath }) {
             <a
               href="/contact"
               className={`block text-center font-semibold px-5 py-2 rounded-full transition-all duration-200 ${activeSection === "contact"
-                  ? "bg-[#116a9a] text-white ring-2 ring-[#1481b8]/30 shadow-sm"
-                  : "bg-[#1481b8] text-white hover:bg-[#116a9a]"
+                ? "bg-[#116a9a] text-white ring-2 ring-[#1481b8]/30 shadow-sm"
+                : "bg-[#1481b8] text-white hover:bg-[#116a9a]"
                 }`}
               onClick={() => {
                 setOpen(false);
