@@ -11,7 +11,7 @@ export default function Navbar({ currentPath }) {
     if (path === "/contact") return "contact";
     return "home";
   });
-  const clickLock = useRef(false); // prevents observer overriding a click
+  const clickLock = useRef(false); // prevents observer overriding a clickoo
   const [phone, setPhone] = useState("+91 99219 17083");
 
   useEffect(() => {
@@ -117,17 +117,16 @@ export default function Navbar({ currentPath }) {
           {/* Contact Us button */}
           <a
             href="/contact"
-            className={`text-sm font-semibold px-5 py-2 rounded-full transition-all duration-200 ${
-              activeSection === "contact"
+            className={`text-sm font-semibold px-5 py-2 rounded-full transition-all duration-200 ${activeSection === "contact"
                 ? "bg-[#116a9a] text-white ring-2 ring-offset-2 ring-[#1481b8]/50 shadow-sm"
                 : "bg-[#1481b8] text-white hover:bg-[#116a9a]"
-            }`}
+              }`}
             onClick={() => handleNavClick("contact")}
           >
             Contact Us
           </a>
         </div>
- 
+
         {/* Mobile menu button */}
         <button
           className="md:hidden text-[#1481b8] focus:outline-none"
@@ -145,7 +144,7 @@ export default function Navbar({ currentPath }) {
           )}
         </button>
       </div>
- 
+
       {/* Mobile dropdown */}
       {open && (
         <ul className="md:hidden bg-white border-t px-6 pb-4 flex flex-col gap-2">
@@ -160,7 +159,7 @@ export default function Navbar({ currentPath }) {
               </a>
             </li>
           ))}
- 
+
           {/* Phone */}
           <li>
             <a
@@ -175,16 +174,15 @@ export default function Navbar({ currentPath }) {
               {phone}
             </a>
           </li>
- 
+
           {/* Contact Us */}
           <li className="pt-1">
             <a
               href="/contact"
-              className={`block text-center font-semibold px-5 py-2 rounded-full transition-all duration-200 ${
-                activeSection === "contact"
+              className={`block text-center font-semibold px-5 py-2 rounded-full transition-all duration-200 ${activeSection === "contact"
                   ? "bg-[#116a9a] text-white ring-2 ring-[#1481b8]/30 shadow-sm"
                   : "bg-[#1481b8] text-white hover:bg-[#116a9a]"
-              }`}
+                }`}
               onClick={() => {
                 setOpen(false);
                 handleNavClick("contact");
