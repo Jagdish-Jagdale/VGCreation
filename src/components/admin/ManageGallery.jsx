@@ -32,7 +32,7 @@ export default function ManageGallery({ triggerToast }) {
       setServicesList(list);
     } catch (e) {
       console.error(e);
-      triggerToast("Failed to fetch services", "error");
+      triggerToast("Failed to fetch servicestt", "error");
     }
   };
 
@@ -101,7 +101,7 @@ export default function ManageGallery({ triggerToast }) {
         const fileExt = imageFile.name.split('.').pop();
         const fileName = `gallery/gallery_${Date.now()}.${fileExt}`;
         const storageRef = ref(storage, fileName);
-        
+
         await uploadBytes(storageRef, imageFile);
         finalImageUrl = await getDownloadURL(storageRef);
       }
@@ -182,34 +182,34 @@ export default function ManageGallery({ triggerToast }) {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
           {gallery.map((item) => (
-          <div key={item.id} className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden flex flex-col justify-between group relative">
-            <div className="relative h-40 overflow-hidden">
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-full h-full object-cover"
-              />
-              <button
-                onClick={() => setDeleteModal({ show: true, id: item.id, itemName: item.title, serviceId: item.serviceId })}
-                className="absolute top-2.5 right-2.5 bg-white/95 hover:bg-red-50 text-red-600 hover:text-red-700 p-1.5 rounded-lg shadow transition-colors cursor-pointer"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
+            <div key={item.id} className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden flex flex-col justify-between group relative">
+              <div className="relative h-40 overflow-hidden">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
+                <button
+                  onClick={() => setDeleteModal({ show: true, id: item.id, itemName: item.title, serviceId: item.serviceId })}
+                  className="absolute top-2.5 right-2.5 bg-white/95 hover:bg-red-50 text-red-600 hover:text-red-700 p-1.5 rounded-lg shadow transition-colors cursor-pointer"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+              <div className="p-3">
+                <span className="text-[10px] font-bold text-violet-600 uppercase block tracking-wider mb-1 line-clamp-1" title={item.serviceName}>{item.serviceName}</span>
+                <h4 className="text-slate-800 text-xs font-bold leading-tight line-clamp-1">{item.title}</h4>
+              </div>
             </div>
-            <div className="p-3">
-              <span className="text-[10px] font-bold text-violet-600 uppercase block tracking-wider mb-1 line-clamp-1" title={item.serviceName}>{item.serviceName}</span>
-              <h4 className="text-slate-800 text-xs font-bold leading-tight line-clamp-1">{item.title}</h4>
+          ))}
+          {gallery.length === 0 && (
+            <div className="col-span-full py-12 text-center text-slate-400 text-sm font-medium">
+              No gallery images found.
             </div>
-          </div>
-        ))}
-        {gallery.length === 0 && (
-          <div className="col-span-full py-12 text-center text-slate-400 text-sm font-medium">
-            No gallery images found.
-          </div>
-        )}
-      </div>
+          )}
+        </div>
       )}
 
       {/* Gallery Image Add Modal */}
