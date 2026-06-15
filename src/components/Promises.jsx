@@ -39,7 +39,7 @@ export default function Promises() {
           setPromisesList([]); // Hide if no data is present
         }
       } catch (error) {
-        console.error("Error fetching Promises dataqq:", error);
+        console.error("Error fetching Promises data:", error);
       }
     };
     fetchData();
