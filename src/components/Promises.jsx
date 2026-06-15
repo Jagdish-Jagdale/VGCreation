@@ -39,7 +39,7 @@ export default function Promises() {
           setPromisesList([]); // Hide if no data is present
         }
       } catch (error) {
-        console.error("Error fetching Promises data:", error);
+        console.error("Error fetching Promises dataqq:", error);
       }
     };
     fetchData();
@@ -51,34 +51,34 @@ export default function Promises() {
     <section id="promises" className="py-16 bg-[#f8fafc] text-slate-800 border-y border-slate-100">
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          
+
           <div className="lg:col-span-5 flex flex-col items-start">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-[#1481b8] text-xs font-semibold uppercase tracking-wider mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-[#1481b8]"></span>
               Our Promises
             </span>
-            
+
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight mb-4 leading-tight text-slate-900">
               {meta.title1} <br />
               <span className="text-[#1481b8]">
                 {meta.title2}
               </span>
             </h2>
-            
+
             <p className="text-slate-500 text-sm md:text-base leading-relaxed mb-6 max-w-xl">
               {meta.description}
             </p>
-            
+
             <a
               href="/contact"
               className="inline-flex items-center justify-center gap-2 bg-[#1481b8] hover:bg-[#116e9d] text-white font-semibold text-sm px-6 py-3 rounded-full shadow-md shadow-[#1481b8]/10 hover:shadow-lg transition-all hover:scale-[1.02] duration-200 group"
             >
               {meta.buttonLabel}
-              <svg 
-                className="w-4 h-4 transform transition-transform group-hover:translate-x-0.5" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2.5" 
+              <svg
+                className="w-4 h-4 transform transition-transform group-hover:translate-x-0.5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
                 viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -96,11 +96,11 @@ export default function Promises() {
                   <div className="w-10 h-10 rounded-lg bg-sky-50/80 flex items-center justify-center mb-4 transition-colors duration-200 group-hover:bg-sky-100">
                     {promiseIcons[index % promiseIcons.length]}
                   </div>
-                  
+
                   <h3 className="text-base font-bold text-slate-800 mb-1.5 transition-colors duration-200 group-hover:text-[#1481b8]">
                     {promise.title}
                   </h3>
-                  
+
                   <p className="text-xs text-slate-500 leading-relaxed">
                     {promise.description}
                   </p>
@@ -108,7 +108,7 @@ export default function Promises() {
               ))}
             </div>
           </div>
-          
+
         </div>
       </div>
     </section>
