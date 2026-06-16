@@ -75,7 +75,7 @@ export default function HomeSettings({ triggerToast, setActiveTab }) {
         if (heroDoc.exists()) {
           setHomeData({ ...defaultHome, ...heroDoc.data() });
         } else {
-          // Fallback to local storage if firebase is empty initiallyzz
+          // Fallback to local storage if firebase is empty initially
           const savedHome = localStorage.getItem("vg_home");
           if (savedHome) {
             let parsed = JSON.parse(savedHome);
