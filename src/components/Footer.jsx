@@ -86,7 +86,7 @@ export default function Footer() {
                 </a>
               </div>
               <div className="text-xs text-gray-400 leading-tight">
-                <span className="block font-medium">Scan to visit on Google Mapsii</span>
+                <span className="block font-medium">Scan to visit on Google Maps</span>
                 <a
                   href={mapsSearchUrl}
                   target="_blank"
