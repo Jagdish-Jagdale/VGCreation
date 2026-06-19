@@ -51,7 +51,7 @@ export default function AboutSettings({ triggerToast }) {
         const overviewDoc = await getDoc(doc(db, "about", "aboutoverview"));
         if (overviewDoc.exists()) setOverviewData(overviewDoc.data());
 
-        // Why Us
+        // Why Usoo
         const whyUsDoc = await getDoc(doc(db, "about", "whyus"));
         if (whyUsDoc.exists()) {
           const data = whyUsDoc.data();
