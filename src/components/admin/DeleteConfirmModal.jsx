@@ -8,7 +8,7 @@ export default function DeleteConfirmModal({ isOpen, onClose, onConfirm, itemNam
     <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl relative overflow-hidden animate-in fade-in zoom-in duration-200">
 
-        {/* Header/Close Button */}
+        {/* Header/Close Buttonkk */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
