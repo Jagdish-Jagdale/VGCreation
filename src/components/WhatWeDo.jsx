@@ -43,7 +43,7 @@ const services = [
   },
   {
     id: 4,
-    category: "FASAD WORK",
+    category: "FASAD WORKas",
     title: "Fasad Work",
     description: "Structural and semi-structural facade work, curtain walls, and spider glass for building exteriors.",
     features: ["STRUCTURAL", "SEMI-STRUCTURAL", "CURTAIN WALL"],
