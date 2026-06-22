@@ -16,7 +16,7 @@ export default function ProtectedRoute({ children, requireAuth = true, redirectT
       }, 0);
     }
   }, [isAdmin, requireAuth, redirectTo]);
-
+  //demo
   if (requireAuth && !isAdmin) return null;
   if (!requireAuth && isAdmin) return null;
 
