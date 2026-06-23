@@ -80,7 +80,7 @@ export default function Footer() {
                 <a href={mapsSearchUrl} target="_blank" rel="noopener noreferrer">
                   <img
                     src={qrCodeUrl}
-                    alt="Scan to visit on Google Maps"
+                    alt="Scan to visit on Google Mapsaf"
                     className="w-28 h-28 object-contain"
                   />
                 </a>
