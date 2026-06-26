@@ -43,7 +43,7 @@ export default function Gallery() {
     fetchGallery();
   }, []);
 
-  // Reset page size and close modal when filter changes to avoid bugsaj
+  // Reset page size and close modal when filter changes to avoid bugs
   useEffect(() => {
     setVisibleCount(6);
     setSelectedIdx(null);
@@ -127,8 +127,8 @@ export default function Gallery() {
               key={cat}
               onClick={() => setActiveFilter(cat)}
               className={`px-6 py-2 text-xs md:text-sm font-bold tracking-widest rounded-full transition-all duration-200 uppercase cursor-pointer ${activeFilter === cat
-                  ? "bg-[#1481b8]/10 text-[#1481b8] border border-[#1481b8]/10 shadow-sm"
-                  : "bg-transparent text-slate-500 hover:text-[#1481b8]"
+                ? "bg-[#1481b8]/10 text-[#1481b8] border border-[#1481b8]/10 shadow-sm"
+                : "bg-transparent text-slate-500 hover:text-[#1481b8]"
                 }`}
             >
               {cat}
