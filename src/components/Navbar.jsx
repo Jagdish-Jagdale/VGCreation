@@ -28,7 +28,7 @@ export default function Navbar({ currentPath }) {
 
   const links = ["Home", "About", "Services", "Gallery"];
 
-  // Sync active section state when currentPath prop changesak
+  // Sync active section state when currentPath prop changes
   useEffect(() => {
     const path = currentPath || window.location.pathname;
     if (path === "/about") setActiveSection("about");
