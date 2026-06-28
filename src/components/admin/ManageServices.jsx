@@ -15,7 +15,7 @@ export default function ManageServices({ triggerToast }) {
   const [isFetching, setIsFetching] = useState(true);
   const [deleteModal, setDeleteModal] = useState({ show: false, id: null, itemName: "" });
 
-  // Search & Filter state
+  // Search & Filter stateal
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("ALL"); // ALL, FEATURED, UNFEATURED
 
@@ -77,7 +77,7 @@ export default function ManageServices({ triggerToast }) {
         const fileExt = imageFile.name.split('.').pop();
         const fileName = `services/service_${Date.now()}.${fileExt}`;
         const storageRef = ref(storage, fileName);
-        
+
         await uploadBytes(storageRef, imageFile);
         finalImageUrl = await getDownloadURL(storageRef);
       }
@@ -126,7 +126,7 @@ export default function ManageServices({ triggerToast }) {
   const handleToggleFeatured = async (service) => {
     try {
       const newStatus = !service.featured;
-      
+
       // If trying to feature, check if already 6 are featured
       if (newStatus) {
         const featuredCount = services.filter(s => s.featured).length;
@@ -187,7 +187,7 @@ export default function ManageServices({ triggerToast }) {
             className="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#6340b2] focus:bg-white transition-colors text-slate-800"
           />
         </div>
-        
+
         <div className="w-full sm:w-auto">
           <select
             value={filterType}
@@ -240,10 +240,10 @@ export default function ManageServices({ triggerToast }) {
                   </td>
                   <td className="py-3 px-5 align-middle">
                     <label className="relative inline-flex items-center cursor-pointer">
-                      <input 
-                        type="checkbox" 
-                        className="sr-only peer" 
-                        checked={service.featured || false} 
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={service.featured || false}
                         onChange={() => handleToggleFeatured(service)}
                       />
                       <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#1481b8]"></div>
@@ -282,7 +282,7 @@ export default function ManageServices({ triggerToast }) {
             </h3>
 
             <form onSubmit={handleServiceFormSubmit} className="space-y-5">
-              
+
               {/* Image Input Section */}
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -315,7 +315,7 @@ export default function ManageServices({ triggerToast }) {
                     {imageFile && <p className="text-[10px] text-green-600 font-bold mt-2 pl-1">Selected: {imageFile.name}</p>}
                   </div>
                 )}
-                
+
                 {/* Image Preview Area */}
                 {serviceForm.image && (
                   <div className="mt-3 rounded-xl overflow-hidden border border-slate-200 h-32 w-48 relative bg-slate-50 flex items-center justify-center">
