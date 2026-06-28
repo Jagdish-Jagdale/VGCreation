@@ -15,7 +15,7 @@ export default function ManageServices({ triggerToast }) {
   const [isFetching, setIsFetching] = useState(true);
   const [deleteModal, setDeleteModal] = useState({ show: false, id: null, itemName: "" });
 
-  // Search & Filter stateal
+  // Search & Filter state
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("ALL"); // ALL, FEATURED, UNFEATURED
 
