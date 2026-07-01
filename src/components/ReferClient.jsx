@@ -23,7 +23,7 @@ export default function ReferClient() {
             });
           if (data.cards) setCards(data.cards);
         } else {
-          setCards([]); // Hide if no data is presentac
+          setCards([]); // Hide if no data is present
         }
       } catch (error) {
         console.error("Error fetching ReferClient data:", error);
