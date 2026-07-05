@@ -5,7 +5,7 @@ import { doc, getDoc } from "firebase/firestore";
 export default function WhatsAppButton() {
   const [showLabel, setShowLabel] = useState(false);
   const [whatsappNumber, setWhatsappNumber] = useState("");
-  
+
   useEffect(() => {
     const fetchWhatsapp = async () => {
       try {
@@ -23,7 +23,7 @@ export default function WhatsAppButton() {
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hello,%20I%20have%20an%20inquiry%20regarding%20your%20services.`;
 
   useEffect(() => {
-    // Initial show after 3 seconds, then hide after 5 seconds
+    // Initial show after 3 seconds, then hide after 5 secondsav
     const initialTimer = setTimeout(() => {
       setShowLabel(true);
       const hideInitialTimer = setTimeout(() => {
@@ -52,12 +52,11 @@ export default function WhatsAppButton() {
   return (
     <div className="fixed bottom-6 right-6 z-[999] flex items-center gap-3">
       {/* Tooltip Speech Bubble */}
-      <div 
-        className={`relative bg-white text-gray-800 text-xs font-bold px-3 py-2.5 rounded-xl shadow-2xl border border-gray-100 flex items-center gap-2 transition-all duration-500 transform ${
-          showLabel 
-            ? "opacity-100 translate-x-0 scale-100" 
+      <div
+        className={`relative bg-white text-gray-800 text-xs font-bold px-3 py-2.5 rounded-xl shadow-2xl border border-gray-100 flex items-center gap-2 transition-all duration-500 transform ${showLabel
+            ? "opacity-100 translate-x-0 scale-100"
             : "opacity-0 translate-x-4 scale-95 pointer-events-none"
-        }`}
+          }`}
       >
         <span className="w-2 h-2 rounded-full bg-[#25D366] inline-block shrink-0 animate-ping"></span>
         <span className="whitespace-nowrap">How can we help?</span>
