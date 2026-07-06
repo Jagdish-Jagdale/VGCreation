@@ -32,7 +32,7 @@ export default function ManageGallery({ triggerToast }) {
       setServicesList(list);
     } catch (e) {
       console.error(e);
-      triggerToast("Failed to fetch servicesab", "error");
+      triggerToast("Failed to fetch services", "error");
     }
   };
 
