@@ -34,7 +34,7 @@ const services = [
   },
   {
     id: 2,
-    category: "CORPORATEak",
+    category: "CORPORATE",
     title: "Corporate",
     description:
       "High-end glass partitions, meeting room enclosures, and premium interiors for corporate settings.",
