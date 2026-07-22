@@ -121,7 +121,7 @@ export default function WhoWeServe() {
               key={client.id}
               className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 group"
             >
-              {/* Image Areaag */}
+              {/* Image Area */}
               <div className="relative h-56 w-full overflow-hidden">
                 <img
                   src={client.image}
