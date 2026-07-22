@@ -13,38 +13,54 @@ export default function WhoWeServe() {
   });
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(doc(db, "home", "majorclients"), (docSnap) => {
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        if (data.meta) {
-          setMeta(data.meta);
-          localStorage.setItem("vg_majorclients_meta", JSON.stringify(data.meta));
+    const unsubscribe = onSnapshot(
+      doc(db, "home", "majorclients"),
+      (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.meta) {
+            setMeta(data.meta);
+            localStorage.setItem(
+              "vg_majorclients_meta",
+              JSON.stringify(data.meta),
+            );
+          }
+          if (data.list) {
+            setDisplayClients(data.list);
+            localStorage.setItem(
+              "vg_majorclients_list",
+              JSON.stringify(data.list),
+            );
+          }
+        } else {
+          const defaultMeta = {
+            title: "",
+            description: "",
+          };
+          setMeta(defaultMeta);
+          localStorage.setItem(
+            "vg_majorclients_meta",
+            JSON.stringify(defaultMeta),
+          );
+          setDisplayClients([]);
+          localStorage.setItem("vg_majorclients_list", JSON.stringify([]));
         }
-        if (data.list) {
-          setDisplayClients(data.list);
-          localStorage.setItem("vg_majorclients_list", JSON.stringify(data.list));
-        }
-      } else {
-        const defaultMeta = {
-          title: "",
-          description: ""
-        };
-        setMeta(defaultMeta);
-        localStorage.setItem("vg_majorclients_meta", JSON.stringify(defaultMeta));
+      },
+      (error) => {
+        console.error("Error fetching WhoWeServe data:", error);
         setDisplayClients([]);
-        localStorage.setItem("vg_majorclients_list", JSON.stringify([]));
-      }
-    }, (error) => {
-      console.error("Error fetching WhoWeServe data:", error);
-      setDisplayClients([]);
-    });
+      },
+    );
 
     return () => unsubscribe();
   }, []);
 
   if (!meta || displayClients === null) {
     return (
-      <section id="whoweserve" className="py-16 bg-white border-b border-slate-100">
+      <section
+        id="whoweserve"
+        className="py-16 bg-white border-b border-slate-100"
+      >
         <div className="max-w-6xl mx-auto px-6 animate-pulse">
           <div className="flex items-center justify-center gap-3 mb-3">
             <div className="h-px w-8 bg-gray-300" />
@@ -54,8 +70,11 @@ export default function WhoWeServe() {
           <div className="h-8 w-64 bg-gray-300 rounded mx-auto mb-3" />
           <div className="h-4 w-96 bg-gray-300 rounded mx-auto mb-12" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm h-72 flex flex-col">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm h-72 flex flex-col"
+              >
                 <div className="h-56 bg-gray-300 w-full" />
                 <div className="p-5 flex-1 bg-white border-t border-gray-50">
                   <div className="h-4 bg-gray-300 rounded w-full" />
@@ -71,9 +90,11 @@ export default function WhoWeServe() {
   if (displayClients.length === 0) return null;
 
   return (
-    <section id="whoweserve" className="py-16 bg-white text-slate-800 border-b border-slate-100">
+    <section
+      id="whoweserve"
+      className="py-16 bg-white text-slate-800 border-b border-slate-100"
+    >
       <div className="max-w-6xl mx-auto px-6">
-        
         {/* Section Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-3">
@@ -83,11 +104,11 @@ export default function WhoWeServe() {
             </span>
             <span className="h-px w-8 bg-[#1481b8]/40" />
           </div>
-          
+
           <h2 className="text-3xl font-extrabold text-slate-900 mb-3">
             {meta.title}
           </h2>
-          
+
           <p className="text-slate-500 text-sm md:text-base max-w-xl mx-auto">
             {meta.description}
           </p>
@@ -100,7 +121,7 @@ export default function WhoWeServe() {
               key={client.id}
               className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 group"
             >
-              {/* Image Area */}
+              {/* Image Areaag */}
               <div className="relative h-56 w-full overflow-hidden">
                 <img
                   src={client.image}
@@ -126,7 +147,6 @@ export default function WhoWeServe() {
             </div>
           ))}
         </div>
-        
       </div>
     </section>
   );
