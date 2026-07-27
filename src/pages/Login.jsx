@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import logo from "../assets/vision_glass_creation_logo.png";
 import bgImage from "../assets/gallery10.jpeg";
 import { auth, db } from "../firebase";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 
 export default function Login() {
@@ -11,14 +14,18 @@ export default function Login() {
   const [role, setRole] = useState("Admin");
   const [showPassword, setShowPassword] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  const [toast, setToast] = useState({ show: false, message: "", type: "error" });
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "error",
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     document.title = "Admin Login | Vision Glass Creation";
   }, []);
 
-  // Auto-dismiss toast after 3.5 seconds
+  // Auto-dismiss toast after 3.5 secondspu
   useEffect(() => {
     if (toast.show) {
       const timer = setTimeout(() => {
@@ -35,7 +42,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1. Mandatory check
+    // 1. Mandatory checkpu
     if (!email.trim() || !password.trim()) {
       triggerToast("Email and password are mandatory fields.", "error");
       return;
@@ -53,15 +60,19 @@ export default function Login() {
     try {
       if (isRegistering) {
         // --- REGISTRATION LOGIC ---
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password,
+        );
         const newAdminId = userCredential.user.uid;
-        
+
         // Save to Firestore
         await setDoc(doc(db, "admins", newAdminId), {
           email: email,
           role: role,
           password: password, // As requested, saving password to DB (Note: Not recommended for production)
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         });
 
         triggerToast("Registration successful! Redirecting...", "success");
@@ -70,7 +81,6 @@ export default function Login() {
           window.history.pushState(null, "", "/admin");
           window.dispatchEvent(new PopStateEvent("popstate"));
         }, 1500);
-
       } else {
         // --- LOGIN LOGIC ---
         // Hardcoded admin check (fallback)
@@ -103,25 +113,48 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-[#051120] flex flex-col lg:flex-row overflow-hidden relative">
-
       {/* Toast Notification Card */}
       <div
-        className={`fixed top-6 right-6 z-50 flex items-center gap-3.5 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 border-l-4 max-w-sm ${toast.show ? "translate-x-0 opacity-100" : "translate-x-12 opacity-0 pointer-events-none"
-          } ${toast.type === "success"
+        className={`fixed top-6 right-6 z-50 flex items-center gap-3.5 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 border-l-4 max-w-sm ${
+          toast.show
+            ? "translate-x-0 opacity-100"
+            : "translate-x-12 opacity-0 pointer-events-none"
+        } ${
+          toast.type === "success"
             ? "bg-white text-slate-800 border-green-500"
             : "bg-white text-slate-800 border-red-500"
-          }`}
+        }`}
       >
         {toast.type === "success" ? (
           <div className="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={3}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
             </svg>
           </div>
         ) : (
           <div className="w-6 h-6 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={3}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
             </svg>
           </div>
         )}
@@ -134,8 +167,18 @@ export default function Login() {
           onClick={() => setToast((prev) => ({ ...prev, show: false }))}
           className="text-slate-400 hover:text-slate-600 transition-colors ml-2 cursor-pointer"
         >
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          <svg
+            className="w-3.5 h-3.5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2.5}
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
       </div>
@@ -152,17 +195,23 @@ export default function Login() {
 
         {/* Overlay Content */}
         <div className="absolute inset-0 flex flex-col justify-between p-16 z-10 text-white">
-          <a href="/" className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors font-bold text-sm tracking-wider uppercase">
+          <a
+            href="/"
+            className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors font-bold text-sm tracking-wider uppercase"
+          >
             <span>←</span> Back to Home
           </a>
 
           <div className="max-w-md">
             <h2 className="text-4xl font-black leading-tight mb-4 uppercase tracking-wide">
-              Crafting Elegance<br />
+              Crafting Elegance
+              <br />
               With Precision
             </h2>
             <p className="text-white/80 text-base leading-relaxed">
-              Explore premium commercial facades, structural glazing, acoustic window solutions, and designer mirrors tailored for modern architecture.
+              Explore premium commercial facades, structural glazing, acoustic
+              window solutions, and designer mirrors tailored for modern
+              architecture.
             </p>
           </div>
 
@@ -177,7 +226,10 @@ export default function Login() {
         <div className="w-full max-w-md">
           {/* Logo / Header for mobile */}
           <div className="flex flex-col items-start mb-10">
-            <a href="/" className="lg:hidden mb-6 text-slate-500 hover:text-slate-800 transition-colors font-semibold text-xs flex items-center gap-1.5">
+            <a
+              href="/"
+              className="lg:hidden mb-6 text-slate-500 hover:text-slate-800 transition-colors font-semibold text-xs flex items-center gap-1.5"
+            >
               <span>←</span> Home
             </a>
 
@@ -191,14 +243,19 @@ export default function Login() {
               {isRegistering ? "Register Admin" : "Welcome back"}
             </h1>
             <p className="text-slate-500 text-sm font-medium">
-              {isRegistering ? "Create your admin credentials below" : "Please enter your admin details to continue"}
+              {isRegistering
+                ? "Create your admin credentials below"
+                : "Please enter your admin details to continue"}
             </p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <div>
-              <label htmlFor="email" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2"
+              >
                 Email address
               </label>
               <input
@@ -213,7 +270,10 @@ export default function Login() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2"
+              >
                 Password
               </label>
               <div className="relative flex items-center">
@@ -232,13 +292,37 @@ export default function Login() {
                   className="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none cursor-pointer flex items-center justify-center"
                 >
                   {showPassword ? (
-                    <svg className="w-5 h-5.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                    <svg
+                      className="w-5 h-5.5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                      />
                     </svg>
                   ) : (
-                    <svg className="w-5 h-5.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <svg
+                      className="w-5 h-5.5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
                     </svg>
                   )}
                 </button>
@@ -268,14 +352,20 @@ export default function Login() {
               disabled={isLoading}
               className="w-full py-3.5 bg-[#6340b2] hover:bg-[#5231a3] text-white font-bold rounded-full text-sm uppercase tracking-wider shadow-md shadow-[#6340b2]/10 hover:shadow-lg transition-all cursor-pointer text-center disabled:opacity-70"
             >
-              {isLoading ? "Processing..." : (isRegistering ? "Create Account" : "Sign in")}
+              {isLoading
+                ? "Processing..."
+                : isRegistering
+                  ? "Create Account"
+                  : "Sign in"}
             </button>
           </form>
 
           {/* Toggle Register/Login */}
           <div className="mt-8 text-center">
             <p className="text-sm font-medium text-slate-500">
-              {isRegistering ? "Already have an account?" : "Don't have an account?"}{" "}
+              {isRegistering
+                ? "Already have an account?"
+                : "Don't have an account?"}{" "}
               <button
                 type="button"
                 onClick={() => setIsRegistering(!isRegistering)}
@@ -285,7 +375,6 @@ export default function Login() {
               </button>
             </p>
           </div>
-
         </div>
       </div>
     </div>
