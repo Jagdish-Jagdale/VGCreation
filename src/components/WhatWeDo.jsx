@@ -194,7 +194,7 @@ export default function WhatWeDo() {
 
   if (!servicesList || !meta) {
     return (
-      <section id="services" className="py-20 bg-gray-50">
+      <section id="services" className="pt-10 pb-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-6 animate-pulse">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="h-px w-10 bg-gray-300" />
@@ -227,7 +227,7 @@ export default function WhatWeDo() {
   }
 
   return (
-    <section id="services" className="py-20 bg-gray-50">
+    <section id="services" className="pt-10 pb-16 bg-gray-50">
       <div className="max-w-6xl mx-auto px-6">
         {/* Section label */}
         <div className="flex items-center justify-center gap-3 mb-4">
@@ -242,7 +242,7 @@ export default function WhatWeDo() {
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-3">
           {meta.title}
         </h2>
-        <p className="text-center text-gray-500 max-w-md mx-auto mb-12">
+        <p className="mx-auto mb-4 max-w-3xl text-center text-base leading-relaxed text-white">
           {meta.description}
         </p>
 
