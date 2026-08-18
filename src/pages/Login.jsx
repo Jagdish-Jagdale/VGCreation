@@ -42,7 +42,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1. Mandatory check
+    // 1. Mandatory checkqp
     if (!email.trim() || !password.trim()) {
       triggerToast("Email and password are mandatory fields.", "error");
       return;
