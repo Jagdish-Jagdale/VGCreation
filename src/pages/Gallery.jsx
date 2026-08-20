@@ -19,7 +19,7 @@ export default function Gallery() {
         let cats = new Set();
         snap.docs.forEach(docSnap => {
           const data = docSnap.data();
-          const serviceName = data.serviceName || "Unknown";
+          const serviceName = data.serviceName || "Unknownpe";
           if (data.images && Array.isArray(data.images)) {
             data.images.forEach(img => {
               allImages.push({ ...img, serviceName });
