@@ -17,11 +17,11 @@ export default function Gallery() {
         const snap = await getDocs(collection(db, "gallery"));
         let allImages = [];
         let cats = new Set();
-        snap.docs.forEach(docSnap => {
+        snap.docs.forEach((docSnap) => {
           const data = docSnap.data();
-          const serviceName = data.serviceName || "Unknownpe";
+          const serviceName = data.serviceName || "Unknown";
           if (data.images && Array.isArray(data.images)) {
-            data.images.forEach(img => {
+            data.images.forEach((img) => {
               allImages.push({ ...img, serviceName });
               cats.add(serviceName.toUpperCase());
             });
@@ -50,7 +50,9 @@ export default function Gallery() {
   }, [activeFilter]);
 
   const filteredItems = galleryItems.filter(
-    (item) => activeFilter === "ALL" || (item.serviceName && item.serviceName.toUpperCase() === activeFilter)
+    (item) =>
+      activeFilter === "ALL" ||
+      (item.serviceName && item.serviceName.toUpperCase() === activeFilter),
   );
 
   // Distribute items across 3 columns to maintain masonry look
@@ -64,11 +66,15 @@ export default function Gallery() {
   };
 
   const handleNext = () => {
-    setSelectedIdx((prev) => (prev === filteredItems.length - 1 ? 0 : prev + 1));
+    setSelectedIdx((prev) =>
+      prev === filteredItems.length - 1 ? 0 : prev + 1,
+    );
   };
 
   const handlePrev = () => {
-    setSelectedIdx((prev) => (prev === 0 ? filteredItems.length - 1 : prev - 1));
+    setSelectedIdx((prev) =>
+      prev === 0 ? filteredItems.length - 1 : prev - 1,
+    );
   };
 
   // Keyboard navigation for open modal
@@ -87,18 +93,19 @@ export default function Gallery() {
 
   return (
     <div className="bg-[#f8fafc] min-h-screen text-slate-800 pb-16">
-
       {/* Hero Banner with Office Glass Walkway Background */}
       <div
         className="relative py-28 text-white overflow-hidden text-center bg-cover bg-center mb-10"
         style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(12, 28, 48, 0.88), rgba(4, 14, 26, 0.93)), url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=80')`
+          backgroundImage: `linear-gradient(to bottom, rgba(12, 28, 48, 0.88), rgba(4, 14, 26, 0.93)), url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=80')`,
         }}
       >
         <div className="relative z-10 max-w-4xl mx-auto px-6">
           {/* Breadcrumb */}
           <div className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-widest text-sky-400 mb-4">
-            <a href="/" className="hover:underline">Home</a>
+            <a href="/" className="hover:underline">
+              Home
+            </a>
             <span>•</span>
             <span className="text-white/60">Gallery</span>
           </div>
@@ -126,10 +133,11 @@ export default function Gallery() {
             <button
               key={cat}
               onClick={() => setActiveFilter(cat)}
-              className={`px-6 py-2 text-xs md:text-sm font-bold tracking-widest rounded-full transition-all duration-200 uppercase cursor-pointer ${activeFilter === cat
-                ? "bg-[#1481b8]/10 text-[#1481b8] border border-[#1481b8]/10 shadow-sm"
-                : "bg-transparent text-slate-500 hover:text-[#1481b8]"
-                }`}
+              className={`px-6 py-2 text-xs md:text-sm font-bold tracking-widest rounded-full transition-all duration-200 uppercase cursor-pointer ${
+                activeFilter === cat
+                  ? "bg-[#1481b8]/10 text-[#1481b8] border border-[#1481b8]/10 shadow-sm"
+                  : "bg-transparent text-slate-500 hover:text-[#1481b8]"
+              }`}
             >
               {cat}
             </button>
@@ -143,14 +151,24 @@ export default function Gallery() {
           {columns.map((col, colIdx) => (
             <div key={colIdx} className="flex flex-col gap-6">
               {col.map((item) => {
-                const itemIdx = filteredItems.findIndex((f) => f.id === item.id);
+                const itemIdx = filteredItems.findIndex(
+                  (f) => f.id === item.id,
+                );
                 return (
                   <div
                     key={item.id}
                     onClick={() => setSelectedIdx(itemIdx)}
-                    className={`relative group overflow-hidden rounded-2xl shadow-sm border border-slate-100 transition-all duration-300 hover:shadow-xl cursor-pointer ${item.isTall ? "h-[500px]" : "h-[238px]"
-                      } ${itemIdx >= 6 ? "animate-fade-in-up" : ""}`}
-                    style={itemIdx >= 6 ? { animationDelay: `${(itemIdx - 6) * 100}ms`, opacity: 0 } : {}}
+                    className={`relative group overflow-hidden rounded-2xl shadow-sm border border-slate-100 transition-all duration-300 hover:shadow-xl cursor-pointer ${
+                      item.isTall ? "h-[500px]" : "h-[238px]"
+                    } ${itemIdx >= 6 ? "animate-fade-in-up" : ""}`}
+                    style={
+                      itemIdx >= 6
+                        ? {
+                            animationDelay: `${(itemIdx - 6) * 100}ms`,
+                            opacity: 0,
+                          }
+                        : {}
+                    }
                   >
                     {/* Image */}
                     <img
@@ -161,7 +179,10 @@ export default function Gallery() {
 
                     {/* Hover Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
-                      <span className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-1.5 line-clamp-1" title={item.serviceName}>
+                      <span
+                        className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-1.5 line-clamp-1"
+                        title={item.serviceName}
+                      >
                         {item.serviceName}
                       </span>
                       <h3 className="text-white font-bold text-lg leading-snug">
@@ -196,7 +217,11 @@ export default function Gallery() {
                 strokeWidth="2.5"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
           </div>
@@ -211,8 +236,18 @@ export default function Gallery() {
             onClick={() => setSelectedIdx(null)}
             className="absolute right-6 top-6 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.5}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
 
@@ -221,8 +256,18 @@ export default function Gallery() {
             onClick={handlePrev}
             className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.5}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
           </button>
 
@@ -240,8 +285,18 @@ export default function Gallery() {
             onClick={handleNext}
             className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.5}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
 
@@ -262,8 +317,11 @@ export default function Gallery() {
                 <button
                   key={dotIdx}
                   onClick={() => setSelectedIdx(dotIdx)}
-                  className={`w-1.5 h-1.5 rounded-full transition-colors cursor-pointer ${dotIdx === selectedIdx ? "bg-white" : "bg-white/20 hover:bg-white/40"
-                    }`}
+                  className={`w-1.5 h-1.5 rounded-full transition-colors cursor-pointer ${
+                    dotIdx === selectedIdx
+                      ? "bg-white"
+                      : "bg-white/20 hover:bg-white/40"
+                  }`}
                 />
               ))}
             </div>
@@ -275,7 +333,6 @@ export default function Gallery() {
           </div>
         </div>
       )}
-
     </div>
   );
 }
