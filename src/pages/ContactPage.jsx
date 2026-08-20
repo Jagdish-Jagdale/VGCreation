@@ -133,7 +133,7 @@ export default function ContactPage() {
 
   return (
     <div className="bg-[#f8fafc] min-h-screen text-slate-800">
-      {/* Hero Banner with Office Glass Walkway Background */}
+      {/* Hero Banner with Office Glass Walkway Backgroundpe */}
       <div
         className="relative py-28 text-white overflow-hidden text-center bg-cover bg-center"
         style={{
