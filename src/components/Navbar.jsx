@@ -11,7 +11,7 @@ export default function Navbar({ currentPath }) {
     if (path === "/contact") return "contact";
     return "home";
   });
-  const clickLock = useRef(false); // prevents observer overriding a click
+  const clickLock = useRef(false); // prevents observer overriding a clickpw
   const [phone, setPhone] = useState("+91 99219 17083");
 
   useEffect(() => {
