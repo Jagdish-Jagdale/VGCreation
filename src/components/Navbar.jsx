@@ -11,7 +11,7 @@ export default function Navbar({ currentPath }) {
     if (path === "/contact") return "contact";
     return "home";
   });
-  const clickLock = useRef(false); // prevents observer overriding a clickpw
+  const clickLock = useRef(false); // prevents observer overriding a click
   const [phone, setPhone] = useState("+91 99219 17083");
 
   useEffect(() => {
@@ -37,8 +37,6 @@ export default function Navbar({ currentPath }) {
     else if (path === "/contact") setActiveSection("contact");
     else if (path === "/") setActiveSection("home");
   }, [currentPath]);
-
-
 
   // On nav click: set active immediately, lock observer for 800ms (scroll duration)
   const handleNavClick = (link) => {
@@ -75,7 +73,11 @@ export default function Navbar({ currentPath }) {
       {/* Full-width container — logo flush to left, links flush to right */}
       <div className="w-full px-12 py-3 flex items-center justify-between">
         {/* Logo */}
-        <a href="/" className="flex-shrink-0" onClick={() => handleNavClick("home")}>
+        <a
+          href="/"
+          className="flex-shrink-0"
+          onClick={() => handleNavClick("home")}
+        >
           <img
             src={logo}
             alt="Vision Glass Creation"
@@ -89,7 +91,11 @@ export default function Navbar({ currentPath }) {
             {links.map((link) => (
               <li key={link}>
                 <a
-                  href={link.toLowerCase() === "home" ? "/" : `/${link.toLowerCase()}`}
+                  href={
+                    link.toLowerCase() === "home"
+                      ? "/"
+                      : `/${link.toLowerCase()}`
+                  }
                   className={linkClass(link)}
                   onClick={() => handleNavClick(link)}
                 >
@@ -107,9 +113,18 @@ export default function Navbar({ currentPath }) {
             href={`tel:${phone.replace(/\s+/g, "")}`}
             className="flex items-center gap-2 text-gray-700 hover:text-[#1481b8] transition-colors font-medium text-sm"
           >
-            <svg className="w-4 h-4 text-[#1481b8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            <svg
+              className="w-4 h-4 text-[#1481b8]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+              />
             </svg>
             {phone}
           </a>
@@ -117,10 +132,11 @@ export default function Navbar({ currentPath }) {
           {/* Contact Us button */}
           <a
             href="/contact"
-            className={`text-sm font-semibold px-5 py-2 rounded-full transition-all duration-200 ${activeSection === "contact"
-              ? "bg-[#116a9a] text-white ring-2 ring-offset-2 ring-[#1481b8]/50 shadow-sm"
-              : "bg-[#1481b8] text-white hover:bg-[#116a9a]"
-              }`}
+            className={`text-sm font-semibold px-5 py-2 rounded-full transition-all duration-200 ${
+              activeSection === "contact"
+                ? "bg-[#116a9a] text-white ring-2 ring-offset-2 ring-[#1481b8]/50 shadow-sm"
+                : "bg-[#1481b8] text-white hover:bg-[#116a9a]"
+            }`}
             onClick={() => handleNavClick("contact")}
           >
             Contact Us
@@ -134,12 +150,32 @@ export default function Navbar({ currentPath }) {
           aria-label="Toggle menu"
         >
           {open ? (
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           ) : (
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           )}
         </button>
@@ -151,7 +187,9 @@ export default function Navbar({ currentPath }) {
           {links.map((link) => (
             <li key={link}>
               <a
-                href={link.toLowerCase() === "home" ? "/" : `/${link.toLowerCase()}`}
+                href={
+                  link.toLowerCase() === "home" ? "/" : `/${link.toLowerCase()}`
+                }
                 className={mobileLinkClass(link)}
                 onClick={() => handleNavClick(link)}
               >
@@ -167,9 +205,18 @@ export default function Navbar({ currentPath }) {
               className="flex items-center gap-2 pl-3 py-1 text-gray-700 font-medium hover:text-[#1481b8] transition-colors"
               onClick={() => setOpen(false)}
             >
-              <svg className="w-4 h-4 text-[#1481b8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              <svg
+                className="w-4 h-4 text-[#1481b8]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                />
               </svg>
               {phone}
             </a>
@@ -179,10 +226,11 @@ export default function Navbar({ currentPath }) {
           <li className="pt-1">
             <a
               href="/contact"
-              className={`block text-center font-semibold px-5 py-2 rounded-full transition-all duration-200 ${activeSection === "contact"
-                ? "bg-[#116a9a] text-white ring-2 ring-[#1481b8]/30 shadow-sm"
-                : "bg-[#1481b8] text-white hover:bg-[#116a9a]"
-                }`}
+              className={`block text-center font-semibold px-5 py-2 rounded-full transition-all duration-200 ${
+                activeSection === "contact"
+                  ? "bg-[#116a9a] text-white ring-2 ring-[#1481b8]/30 shadow-sm"
+                  : "bg-[#1481b8] text-white hover:bg-[#116a9a]"
+              }`}
               onClick={() => {
                 setOpen(false);
                 handleNavClick("contact");
