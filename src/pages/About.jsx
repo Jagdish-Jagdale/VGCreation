@@ -60,7 +60,7 @@ export default function About() {
 
   return (
     <div className="bg-white min-h-screen text-slate-800">
-      {/* Hero Banner with Office Glass Walkway Backgroundpl */}
+      {/* Hero Banner with Office Glass Walkway Background */}
       <div
         className="relative py-28 text-white overflow-hidden text-center bg-cover bg-center"
         style={{
