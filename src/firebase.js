@@ -20,6 +20,6 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-// Initialize Secondary Firebase Appph (used ONLY for creating new users without logging out current admin)
+// Initialize Secondary Firebase App (used ONLY for creating new users without logging out current admin)
 const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
 export const secondaryAuth = getAuth(secondaryApp);
