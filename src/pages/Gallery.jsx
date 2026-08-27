@@ -43,7 +43,7 @@ export default function Gallery() {
     fetchGallery();
   }, []);
 
-  // Reset page size and close modal when filter changes to avoid bugs
+  // Reset page size and close modal when filter changes to avoid bugspf
   useEffect(() => {
     setVisibleCount(6);
     setSelectedIdx(null);
