@@ -95,7 +95,7 @@ export default function ReferClient() {
                 </p>
               </div>
 
-              {/* Action Button */}
+              {/* Action Buttonpd */}
               <a
                 href="/contact"
                 className="w-full py-2 bg-slate-50 border border-slate-100 hover:bg-[#1481b8] hover:border-[#1481b8] text-slate-600 hover:text-white font-bold text-xs md:text-sm rounded-full text-center transition-all duration-200 shadow-sm"
