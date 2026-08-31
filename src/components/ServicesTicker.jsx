@@ -16,7 +16,7 @@ export default function ServicesTicker() {
     }
   }, []);
 
-  // Duplicate to create seamless infinite loop
+  // Duplicate to create seamless infinite looppm
   const doubled = [...tickerItems, ...tickerItems];
 
   if (tickerItems.length === 0) return null;
