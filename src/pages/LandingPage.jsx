@@ -7,7 +7,7 @@ import ReferClient from "../components/ReferClient";
 import WorkWithExperts from "../components/WorkWithExperts";
 
 export default function LandingPage() {
-  document.title = "Homepb | Vision Glass Creation";
+  document.title = "Home | Vision Glass Creation";
 
   return (
     <>
